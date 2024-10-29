@@ -2,8 +2,8 @@ local UIlib = {}
 
 -- Função principal para criar a Janela
 function UIlib:Janela()
-    -- Espaçamento padrão para todos os elementos
-    local padding = 10  -- Espaçamento geral para bordas e entre widgets
+    -- Espaçamento padrão para o corpo
+    local bodyPadding = 10  -- Espaçamento interno no Body
     local widgetHeight = 40  -- Altura padrão dos widgets
 
     -- Criar tela principal
@@ -29,8 +29,7 @@ function UIlib:Janela()
 
     -- Topbar
     local Topbar = Instance.new("Frame")
-    Topbar.Size = UDim2.new(1, -2 * padding, 0, 30)
-    Topbar.Position = UDim2.new(0, padding, 0, padding)
+    Topbar.Size = UDim2.new(1, 0, 0, 30)
     Topbar.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
     Topbar.BorderSizePixel = 0
     Topbar.Parent = MainFrame
@@ -107,24 +106,23 @@ function UIlib:Janela()
 
     -- Menu de Tabs na lateral
     local Menu = Instance.new("Frame")
-    Menu.Size = UDim2.new(0, 100 - padding, 1, -2 * padding - Topbar.Size.Y.Offset)
-    Menu.Position = UDim2.new(0, padding, 0, Topbar.Size.Y.Offset + padding)
+    Menu.Size = UDim2.new(0, 100, 1, -Topbar.Size.Y.Offset)
+    Menu.Position = UDim2.new(0, 0, 0, Topbar.Size.Y.Offset)
     Menu.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
     Menu.BorderSizePixel = 0
     Menu.Parent = MainFrame
 
-    -- Espaço para Widgets
+    -- Espaço para Widgets (Body) com padding interno
     local Body = Instance.new("Frame")
-    Body.Size = UDim2.new(1, -Menu.Size.X.Offset - 3 * padding, 1, -Topbar.Size.Y.Offset - 3 * padding)
-    Body.Position = UDim2.new(0, Menu.Size.X.Offset + 2 * padding, 0, Topbar.Size.Y.Offset + padding)
+    Body.Size = UDim2.new(1, -Menu.Size.X.Offset - 2 * bodyPadding, 1, -Topbar.Size.Y.Offset - 2 * bodyPadding)
+    Body.Position = UDim2.new(0, Menu.Size.X.Offset + bodyPadding, 0, Topbar.Size.Y.Offset + bodyPadding)
     Body.BackgroundTransparency = 1
     Body.Parent = MainFrame
 
     -- Função para criar Tabs
     function UIlib:Menu(nome)
         local TabButton = Instance.new("TextButton")
-        TabButton.Size = UDim2.new(1, -padding, 0, 40)
-        TabButton.Position = UDim2.new(0, padding / 2, 0, (#Menu:GetChildren() - 1) * (widgetHeight + padding))
+        TabButton.Size = UDim2.new(1, 0, 0, 40)
         TabButton.Text = nome
         TabButton.Font = Enum.Font.Roboto
         TabButton.TextSize = 14
@@ -134,7 +132,8 @@ function UIlib:Janela()
         TabButton.Parent = Menu
 
         local TabContent = Instance.new("Frame")
-        TabContent.Size = UDim2.new(1, 0, 1, 0)
+        TabContent.Size = UDim2.new(1, -2 * bodyPadding, 1, -2 * bodyPadding)
+        TabContent.Position = UDim2.new(0, bodyPadding, 0, bodyPadding)
         TabContent.BackgroundTransparency = 1
         TabContent.Visible = false
         TabContent.Parent = Body
@@ -149,8 +148,8 @@ function UIlib:Janela()
         -- Função para adicionar Botão na Tab
         function UIlib:Botao(config)
             local Button = Instance.new("TextButton")
-            Button.Size = UDim2.new(1, -2 * padding, 0, widgetHeight)
-            Button.Position = UDim2.new(0, padding, 0, (#TabContent:GetChildren() * (widgetHeight + padding)))
+            Button.Size = UDim2.new(1, -2 * bodyPadding, 0, widgetHeight)
+            Button.Position = UDim2.new(0, bodyPadding, 0, (#TabContent:GetChildren() * (widgetHeight + bodyPadding)))
             Button.Text = config.Nome or "Botão"
             Button.Font = Enum.Font.Roboto
             Button.TextSize = 14
@@ -168,8 +167,8 @@ function UIlib:Janela()
         -- Função para adicionar Switch na Tab
         function UIlib:Switch(config)
             local Switch = Instance.new("TextButton")
-            Switch.Size = UDim2.new(1, -2 * padding, 0, widgetHeight)
-            Switch.Position = UDim2.new(0, padding, 0, (#TabContent:GetChildren() * (widgetHeight + padding)))
+            Switch.Size = UDim2.new(1, -2 * bodyPadding, 0, widgetHeight)
+            Switch.Position = UDim2.new(0, bodyPadding, 0, (#TabContent:GetChildren() * (widgetHeight + bodyPadding)))
             Switch.Text = config.Nome or "Switch"
             Switch.Font = Enum.Font.Roboto
             Switch.TextSize = 14
