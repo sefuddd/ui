@@ -1,190 +1,163 @@
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
+-- Carregar biblioteca de UI completa
+local UIlib = {}
 
--- Parâmetros de Configuração
-local CONFIG = {
-    MenuSize = UDim2.new(0, 400, 0, 500),
-    MenuPosition = UDim2.new(0.5, 0, 0.5, 0),
-    MenuColor = Color3.fromRGB(23, 23, 23),
-    MenuShadowTransparency = 0.7,
-    MenuBodyTransparency = 0.7,
-
-    TopBarSize = UDim2.new(1, 0, 0, 50),
-    TopBarColor = Color3.fromRGB(33, 33, 33),
-    TopBarBorderSize = 0,
-    TopBarBorderBottomSize = 1,
-    TopBarBorderColor = Color3.fromRGB(40, 40, 40),
-
-    TitleText = "VoidCodex",
-    TitleTextColor = Color3.fromRGB(255, 255, 255),
-    TitleTextSize = 18,
-    TitleFont = Enum.Font.Roboto,
-
-    CloseButtonSize = UDim2.new(0, 30, 0, 30),
-    CloseButtonImage = "rbxassetid://7072725342",
-    CloseButtonColor = Color3.fromRGB(255, 255, 255),
-
-    MinimizeButtonSize = UDim2.new(0, 30, 0, 30),
-    MinimizeButtonImage = "rbxassetid://7072719338",
-    MinimizeButtonColor = Color3.fromRGB(255, 255, 255),
-
-    HotkeyToggle = Enum.KeyCode.V
-}
-
-local function createWindow()
+-- Função principal para criar a Janela
+function UIlib:Janela()
+    -- Criar tela principal
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-    local MenuFrame = Instance.new("Frame")
-    MenuFrame.Size = CONFIG.MenuSize
-    MenuFrame.Position = CONFIG.MenuPosition
-    MenuFrame.BackgroundColor3 = CONFIG.MenuColor
-    MenuFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    MenuFrame.Parent = ScreenGui
-    MenuFrame.Visible = true
+    -- Janela Principal
+    local MainFrame = Instance.new("Frame")
+    MainFrame.Size = UDim2.new(0, 400, 0, 500)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+    MainFrame.BorderSizePixel = 0
+    MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    MainFrame.Parent = ScreenGui
 
-    -- Sombra do Menu
-    local Shadow = Instance.new("ImageLabel")
-    Shadow.Size = UDim2.new(1, 20, 1, 20)
-    Shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
-    Shadow.AnchorPoint = Vector2.new(0.5, 0.5)
-    Shadow.Image = "rbxassetid://1316045217"
-    Shadow.ImageTransparency = CONFIG.MenuShadowTransparency
-    Shadow.BackgroundTransparency = 1
-    Shadow.ZIndex = 0
-    Shadow.Parent = MenuFrame
+    -- Sombras
+    local Shadow = Instance.new("Frame")
+    Shadow.Size = UDim2.new(1, 8, 1, 8)
+    Shadow.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
+    Shadow.BorderSizePixel = 0
+    Shadow.Position = UDim2.new(0, -4, 0, -4)
+    Shadow.Parent = MainFrame
 
-    -- Criar TopBar
-    local TopBar = Instance.new("Frame")
-    TopBar.Size = CONFIG.TopBarSize
-    TopBar.BackgroundColor3 = CONFIG.TopBarColor
-    TopBar.BorderSizePixel = CONFIG.TopBarBorderSize
-    TopBar.Parent = MenuFrame
-
-    -- Borda Inferior
-    local BottomBorder = Instance.new("Frame")
-    BottomBorder.Size = UDim2.new(1, 0, 0, CONFIG.TopBarBorderBottomSize)
-    BottomBorder.Position = UDim2.new(0, 0, 1, 0) -- Na parte inferior da barra
-    BottomBorder.BackgroundColor3 = CONFIG.TopBarBorderColor
-    BottomBorder.BorderSizePixel = 0
-    BottomBorder.Parent = TopBar
+    -- Topbar
+    local Topbar = Instance.new("Frame")
+    Topbar.Size = UDim2.new(1, 0, 0, 30)
+    Topbar.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+    Topbar.BorderSizePixel = 0
+    Topbar.Parent = MainFrame
 
     -- Título
     local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(1, -100, 1, 0)
-    Title.Position = UDim2.new(0, 10, 0, 0)
-    Title.Text = CONFIG.TitleText
-    Title.TextColor3 = CONFIG.TitleTextColor
-    Title.TextSize = CONFIG.TitleTextSize
-    Title.Font = CONFIG.TitleFont
+    Title.Text = "VoidCodex"
+    Title.Font = Enum.Font.Roboto
+    Title.TextSize = 18
+    Title.TextColor3 = Color3.new(1, 1, 1)
     Title.BackgroundTransparency = 1
-    Title.Parent = TopBar
+    Title.Size = UDim2.new(0, 100, 1, 0)
+    Title.Position = UDim2.new(0, 10, 0, 0)
+    Title.Parent = Topbar
 
-    -- Botão Fechar
+    -- Botão de Fechar
     local CloseButton = Instance.new("ImageButton")
-    CloseButton.Size = CONFIG.CloseButtonSize
-    CloseButton.Position = UDim2.new(1, -40, 0.5, -CONFIG.CloseButtonSize.Y.Offset / 2)
-    CloseButton.Image = CONFIG.CloseButtonImage
+    CloseButton.Image = "rbxassetid://7072725342"
+    CloseButton.Size = UDim2.new(0, 20, 0, 20)
+    CloseButton.Position = UDim2.new(1, -30, 0, 5)
     CloseButton.BackgroundTransparency = 1
-    CloseButton.Parent = TopBar
-
+    CloseButton.Parent = Topbar
     CloseButton.MouseButton1Click:Connect(function()
-        ScreenGui:Destroy()  -- Fecha o menu
+        ScreenGui:Destroy()
     end)
 
-    -- Efeito do botão fechar
-    CloseButton.MouseEnter:Connect(function()
-        local tween = TweenService:Create(CloseButton, TweenInfo.new(0.5, Enum.EasingStyle.Bounce), {Rotation = 360})
-        tween:Play()
-    end)
-
-    CloseButton.MouseLeave:Connect(function()
-        CloseButton.Rotation = 0
-    end)
-
-    -- Botão Minimizar
+    -- Botão de Minimizar
     local MinimizeButton = Instance.new("ImageButton")
-    MinimizeButton.Size = CONFIG.MinimizeButtonSize
-    MinimizeButton.Position = UDim2.new(1, -80, 0.5, -CONFIG.MinimizeButtonSize.Y.Offset / 2)
-    MinimizeButton.Image = CONFIG.MinimizeButtonImage
+    MinimizeButton.Image = "rbxassetid://7072719338"
+    MinimizeButton.Size = UDim2.new(0, 20, 0, 20)
+    MinimizeButton.Position = UDim2.new(1, -60, 0, 5)
     MinimizeButton.BackgroundTransparency = 1
-    MinimizeButton.Parent = TopBar
+    MinimizeButton.Parent = Topbar
 
+    -- Alternar minimização
     MinimizeButton.MouseButton1Click:Connect(function()
-        MenuFrame.Visible = false  -- Oculta o menu
+        MainFrame.Visible = not MainFrame.Visible
     end)
 
-    -- Efeito do botão minimizar
-    MinimizeButton.MouseEnter:Connect(function()
-        local tween = TweenService:Create(MinimizeButton, TweenInfo.new(0.2, Enum.EasingStyle.Linear), {Position = UDim2.new(1, -80, 0.5, -15)})
-        tween:Play()
+    -- Reexibir janela ao pressionar "V"
+    game:GetService("UserInputService").InputBegan:Connect(function(input)
+        if input.KeyCode == Enum.KeyCode.V then
+            MainFrame.Visible = not MainFrame.Visible
+        end
     end)
 
-    MinimizeButton.MouseLeave:Connect(function()
-        local tween = TweenService:Create(MinimizeButton, TweenInfo.new(0.2, Enum.EasingStyle.Linear), {Position = UDim2.new(1, -80, 0.5, -CONFIG.MinimizeButtonSize.Y.Offset / 2)})
-        tween:Play()
-    end)
+    -- Menu de Tabs na lateral
+    local Menu = Instance.new("Frame")
+    Menu.Size = UDim2.new(0, 100, 1, -30)
+    Menu.Position = UDim2.new(0, 0, 0, 30)
+    Menu.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+    Menu.BorderSizePixel = 0
+    Menu.Parent = MainFrame
 
-    -- Criação da barra lateral
-    local Sidebar = Instance.new("Frame")
-    Sidebar.Size = UDim2.new(0, 150, 1, -50)
-    Sidebar.Position = UDim2.new(0, 0, 0, 50) -- Abaixo da barra superior
-    Sidebar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    Sidebar.Parent = MenuFrame
+    -- Espaço para Widgets
+    local Body = Instance.new("Frame")
+    Body.Size = UDim2.new(1, -100, 1, -30)
+    Body.Position = UDim2.new(0, 100, 0, 30)
+    Body.BackgroundTransparency = 1
+    Body.Parent = MainFrame
 
-    return MenuFrame, Sidebar
-end
+    -- Função para criar Tabs
+    function UIlib:Menu(nome)
+        local TabButton = Instance.new("TextButton")
+        TabButton.Size = UDim2.new(1, 0, 0, 40)
+        TabButton.Text = nome
+        TabButton.Font = Enum.Font.Roboto
+        TabButton.TextSize = 14
+        TabButton.BackgroundTransparency = 0.1
+        TabButton.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+        TabButton.TextColor3 = Color3.new(1, 1, 1)
+        TabButton.Parent = Menu
 
-local function createTab(sidebar, title)
-    local TabButton = Instance.new("TextButton")
-    TabButton.Size = UDim2.new(1, 0, 0, 30)
-    TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TabButton.Text = title
-    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TabButton.Parent = sidebar
+        local TabContent = Instance.new("Frame")
+        TabContent.Size = UDim2.new(1, 0, 1, 0)
+        TabContent.BackgroundTransparency = 1
+        TabContent.Visible = false
+        TabContent.Parent = Body
 
-    return TabButton
-end
+        TabButton.MouseButton1Click:Connect(function()
+            for _, child in ipairs(Body:GetChildren()) do
+                child.Visible = false
+            end
+            TabContent.Visible = true
+        end)
 
-local function makeDraggable(frame)
-    local dragging = false
-    local dragInput, mousePos, framePos
+        -- Função para adicionar Botão na Tab
+        function UIlib:Botao(config)
+            local Button = Instance.new("TextButton")
+            Button.Size = UDim2.new(0, 200, 0, 40)
+            Button.Text = config.Nome or "Botão"
+            Button.Font = Enum.Font.Roboto
+            Button.TextSize = 14
+            Button.TextColor3 = Color3.new(1, 1, 1)
+            Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            Button.Parent = TabContent
 
-    frame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            mousePos = input.Position
-            framePos = frame.Position
+            if config.Callback then
+                Button.MouseButton1Click:Connect(config.Callback)
+            end
 
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
+            return Button
+        end
+
+        -- Função para adicionar Switch na Tab
+        function UIlib:Switch(config)
+            local Switch = Instance.new("TextButton")
+            Switch.Size = UDim2.new(0, 200, 0, 40)
+            Switch.Text = config.Nome or "Switch"
+            Switch.Font = Enum.Font.Roboto
+            Switch.TextSize = 14
+            Switch.TextColor3 = Color3.new(1, 1, 1)
+            Switch.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            Switch.Parent = TabContent
+
+            local isActive = false
+            Switch.MouseButton1Click:Connect(function()
+                isActive = not isActive
+                Switch.Text = isActive and (config.Nome .. " (Ativo)") or (config.Nome .. " (Inativo)")
+                if config.Callback then
+                    config.Callback(isActive)
                 end
             end)
-        end
-    end)
 
-    frame.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            dragInput = input
+            return Switch
         end
-    end)
 
-    UserInputService.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            local delta = input.Position - mousePos
-            frame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
-        end
-    end)
+        return UIlib
+    end
+
+    return UIlib
 end
 
-local function init()
-    local MenuFrame, Sidebar = createWindow()
-    makeDraggable(MenuFrame)
-    return MenuFrame, Sidebar
-end
-
-return {
-    init = init,
-    createTab = createTab,
-}
+return UIlib
