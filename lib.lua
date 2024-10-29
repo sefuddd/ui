@@ -2,6 +2,10 @@ local UIlib = {}
 
 -- Função principal para criar a Janela
 function UIlib:Janela()
+    -- Espaçamento padrão para todos os elementos
+    local padding = 10  -- Espaçamento geral para bordas e entre widgets
+    local widgetHeight = 40  -- Altura padrão dos widgets
+
     -- Criar tela principal
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -15,7 +19,7 @@ function UIlib:Janela()
     MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
     MainFrame.Parent = ScreenGui
 
-    -- Sombras
+    -- Sombra
     local Shadow = Instance.new("Frame")
     Shadow.Size = UDim2.new(1, 8, 1, 8)
     Shadow.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
@@ -25,7 +29,8 @@ function UIlib:Janela()
 
     -- Topbar
     local Topbar = Instance.new("Frame")
-    Topbar.Size = UDim2.new(1, 0, 0, 30)
+    Topbar.Size = UDim2.new(1, -2 * padding, 0, 30)
+    Topbar.Position = UDim2.new(0, padding, 0, padding)
     Topbar.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
     Topbar.BorderSizePixel = 0
     Topbar.Parent = MainFrame
@@ -102,23 +107,24 @@ function UIlib:Janela()
 
     -- Menu de Tabs na lateral
     local Menu = Instance.new("Frame")
-    Menu.Size = UDim2.new(0, 100, 1, -30)
-    Menu.Position = UDim2.new(0, 0, 0, 30)
+    Menu.Size = UDim2.new(0, 100 - padding, 1, -2 * padding - Topbar.Size.Y.Offset)
+    Menu.Position = UDim2.new(0, padding, 0, Topbar.Size.Y.Offset + padding)
     Menu.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
     Menu.BorderSizePixel = 0
     Menu.Parent = MainFrame
 
     -- Espaço para Widgets
     local Body = Instance.new("Frame")
-    Body.Size = UDim2.new(1, -100, 1, -30)
-    Body.Position = UDim2.new(0, 100, 0, 30)
+    Body.Size = UDim2.new(1, -Menu.Size.X.Offset - 3 * padding, 1, -Topbar.Size.Y.Offset - 3 * padding)
+    Body.Position = UDim2.new(0, Menu.Size.X.Offset + 2 * padding, 0, Topbar.Size.Y.Offset + padding)
     Body.BackgroundTransparency = 1
     Body.Parent = MainFrame
 
     -- Função para criar Tabs
     function UIlib:Menu(nome)
         local TabButton = Instance.new("TextButton")
-        TabButton.Size = UDim2.new(1, 0, 0, 40)
+        TabButton.Size = UDim2.new(1, -padding, 0, 40)
+        TabButton.Position = UDim2.new(0, padding / 2, 0, (#Menu:GetChildren() - 1) * (widgetHeight + padding))
         TabButton.Text = nome
         TabButton.Font = Enum.Font.Roboto
         TabButton.TextSize = 14
@@ -143,8 +149,8 @@ function UIlib:Janela()
         -- Função para adicionar Botão na Tab
         function UIlib:Botao(config)
             local Button = Instance.new("TextButton")
-            Button.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
-            Button.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posicionamento vertical para evitar sobreposição
+            Button.Size = UDim2.new(1, -2 * padding, 0, widgetHeight)
+            Button.Position = UDim2.new(0, padding, 0, (#TabContent:GetChildren() * (widgetHeight + padding)))
             Button.Text = config.Nome or "Botão"
             Button.Font = Enum.Font.Roboto
             Button.TextSize = 14
@@ -162,8 +168,8 @@ function UIlib:Janela()
         -- Função para adicionar Switch na Tab
         function UIlib:Switch(config)
             local Switch = Instance.new("TextButton")
-            Switch.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
-            Switch.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posicionamento vertical para evitar sobreposição
+            Switch.Size = UDim2.new(1, -2 * padding, 0, widgetHeight)
+            Switch.Position = UDim2.new(0, padding, 0, (#TabContent:GetChildren() * (widgetHeight + padding)))
             Switch.Text = config.Nome or "Switch"
             Switch.Font = Enum.Font.Roboto
             Switch.TextSize = 14
