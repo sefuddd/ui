@@ -145,7 +145,7 @@ else
 	end
 end
 
-local minSize = Vector2.new(3024, 768)
+local minSize = Vector2.new(1024, 768)
 local useMobileSizing
 
 if Rayfield.AbsoluteSize.X < minSize.X and Rayfield.AbsoluteSize.Y < minSize.Y then
