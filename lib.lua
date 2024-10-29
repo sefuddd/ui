@@ -15,7 +15,7 @@ function UIlib:Janela()
     MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
     MainFrame.Parent = ScreenGui
 
-    -- Sombra
+    -- Sombras
     local Shadow = Instance.new("Frame")
     Shadow.Size = UDim2.new(1, 8, 1, 8)
     Shadow.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
@@ -102,16 +102,16 @@ function UIlib:Janela()
 
     -- Menu de Tabs na lateral
     local Menu = Instance.new("Frame")
-    Menu.Size = UDim2.new(0, 100, 1, -Topbar.Size.Y.Offset)
-    Menu.Position = UDim2.new(0, 0, 0, Topbar.Size.Y.Offset)
+    Menu.Size = UDim2.new(0, 100, 1, -30)
+    Menu.Position = UDim2.new(0, 0, 0, 30)
     Menu.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
     Menu.BorderSizePixel = 0
     Menu.Parent = MainFrame
 
-    -- Espaço para Widgets (Body)
+    -- Espaço para Widgets
     local Body = Instance.new("Frame")
-    Body.Size = UDim2.new(1, -Menu.Size.X.Offset, 1, -Topbar.Size.Y.Offset)
-    Body.Position = UDim2.new(0, Menu.Size.X.Offset, 0, Topbar.Size.Y.Offset)
+    Body.Size = UDim2.new(1, -100, 1, -30)
+    Body.Position = UDim2.new(0, 100, 0, 30)
     Body.BackgroundTransparency = 1
     Body.Parent = MainFrame
 
@@ -143,7 +143,8 @@ function UIlib:Janela()
         -- Função para adicionar Botão na Tab
         function UIlib:Botao(config)
             local Button = Instance.new("TextButton")
-            Button.Size = UDim2.new(1, 0, 0, 40)
+            Button.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
+            Button.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posicionamento vertical para evitar sobreposição
             Button.Text = config.Nome or "Botão"
             Button.Font = Enum.Font.Roboto
             Button.TextSize = 14
@@ -161,7 +162,8 @@ function UIlib:Janela()
         -- Função para adicionar Switch na Tab
         function UIlib:Switch(config)
             local Switch = Instance.new("TextButton")
-            Switch.Size = UDim2.new(1, 0, 0, 40)
+            Switch.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
+            Switch.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posicionamento vertical para evitar sobreposição
             Switch.Text = config.Nome or "Switch"
             Switch.Font = Enum.Font.Roboto
             Switch.TextSize = 14
