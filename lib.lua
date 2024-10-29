@@ -145,7 +145,7 @@ else
 	end
 end
 
-local minSize = Vector2.new(1024, 768)
+local minSize = Vector2.new(2024, 1768)
 local useMobileSizing
 
 if Rayfield.AbsoluteSize.X < minSize.X and Rayfield.AbsoluteSize.Y < minSize.Y then
@@ -884,7 +884,7 @@ end
 function RayfieldLibrary:CreateWindow(Settings)
 	local Passthrough = false
 	Topbar.Title.Text = Settings.Name
-	Main.Size = UDim2.new(1110, 1450, 1110, 1260)
+	Main.Size = UDim2.new(0, 450, 0, 260)
 	Main.Visible = true
 	Main.BackgroundTransparency = 1
 	LoadingFrame.Title.TextTransparency = 1
