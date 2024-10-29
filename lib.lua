@@ -134,6 +134,11 @@ function UIlib:Janela()
         TabContent.Visible = false
         TabContent.Parent = Body
 
+        -- Verifique se é a primeira aba; se for, torne-a visível
+        if #Menu:GetChildren() == 1 then
+            TabContent.Visible = true
+        end
+        
         TabButton.MouseButton1Click:Connect(function()
             for _, child in ipairs(Body:GetChildren()) do
                 child.Visible = false
