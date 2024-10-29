@@ -125,6 +125,7 @@ function UIlib:Janela()
         TabButton.BackgroundTransparency = 0.1
         TabButton.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
         TabButton.TextColor3 = Color3.new(1, 1, 1)
+        TabButton.Position = UDim2.new(0, 0, 0, #Menu:GetChildren() * 40) -- Adicionada para ajustar a posição de cada TabButton
         TabButton.Parent = Menu
 
         local TabContent = Instance.new("Frame")
