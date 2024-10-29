@@ -1,4 +1,3 @@
--- Carregar biblioteca de UI completa
 local UIlib = {}
 
 -- Função principal para criar a Janela
@@ -73,6 +72,34 @@ function UIlib:Janela()
         end
     end)
 
+    -- Função para arrastar a janela
+    local dragging, dragInput, startPos, startInputPos
+    Topbar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            startPos = MainFrame.Position
+            startInputPos = input.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    Topbar.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - startInputPos
+            MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
     -- Menu de Tabs na lateral
     local Menu = Instance.new("Frame")
     Menu.Size = UDim2.new(0, 100, 1, -30)
@@ -116,7 +143,8 @@ function UIlib:Janela()
         -- Função para adicionar Botão na Tab
         function UIlib:Botao(config)
             local Button = Instance.new("TextButton")
-            Button.Size = UDim2.new(0, 200, 0, 40)
+            Button.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
+            Button.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posicionamento vertical para evitar sobreposição
             Button.Text = config.Nome or "Botão"
             Button.Font = Enum.Font.Roboto
             Button.TextSize = 14
@@ -134,7 +162,8 @@ function UIlib:Janela()
         -- Função para adicionar Switch na Tab
         function UIlib:Switch(config)
             local Switch = Instance.new("TextButton")
-            Switch.Size = UDim2.new(0, 200, 0, 40)
+            Switch.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
+            Switch.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posicionamento vertical para evitar sobreposição
             Switch.Text = config.Nome or "Switch"
             Switch.Font = Enum.Font.Roboto
             Switch.TextSize = 14
