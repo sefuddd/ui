@@ -15,6 +15,12 @@ local CONFIG = {
     TopBarBorderBottomSize = 1,
     TopBarBorderColor = Color3.fromRGB(40, 40, 40),
 
+    SidebarWidth = UDim2.new(0, 100, 1, 0), -- Largura da barra lateral
+    SidebarColor = Color3.fromRGB(13, 13, 13),
+    
+    TabHeight = 40, -- Altura das abas
+    TabTextColor = Color3.fromRGB(255, 255, 255),
+    
     TitleText = "VoidCodex",
     TitleTextColor = Color3.fromRGB(255, 255, 255),
     TitleTextSize = 18,
@@ -30,6 +36,8 @@ local CONFIG = {
 -- Biblioteca UI
 local UI = {}
 UI.MenuFrame = nil
+UI.Tabs = {}
+UI.CurrentTab = nil
 
 -- Função para criar a janela do menu
 function UI.criar_janela()
@@ -106,13 +114,24 @@ function UI.criar_janela()
         UI.MenuFrame.Visible = false
     end)
 
+    -- Criar Barra Lateral
+    local Sidebar = Instance.new("Frame")
+    Sidebar.Size = CONFIG.SidebarWidth
+    Sidebar.Position = UDim2.new(0, 0, 0, 50)
+    Sidebar.BackgroundColor3 = CONFIG.SidebarColor
+    Sidebar.Parent = UI.MenuFrame
+
     -- Criar Corpo do Menu
     local BodyFrame = Instance.new("Frame")
-    BodyFrame.Size = UDim2.new(1, 0, 1, -50)
-    BodyFrame.Position = UDim2.new(0, 0, 0, 50)
+    BodyFrame.Size = UDim2.new(1, -CONFIG.SidebarWidth.X.Offset, 1, -50)
+    BodyFrame.Position = UDim2.new(0, CONFIG.SidebarWidth.X.Offset, 0, 50)
     BodyFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     BodyFrame.BackgroundTransparency = CONFIG.MenuBodyTransparency
     BodyFrame.Parent = UI.MenuFrame
+
+    -- Criar aba padrão
+    UI.CurrentTab = UI.criar_aba("Tab 1")
+    UI.atualizar_conteudo(UI.CurrentTab)
 
     -- Tornar arrastável
     UI.makeDraggable(UI.MenuFrame)
@@ -125,40 +144,72 @@ function UI.criar_janela()
     end)
 end
 
--- Função para criar um botão no corpo do menu
-function UI.criar_botao(nome, callback)
-    if not UI.MenuFrame then
-        error("Você precisa criar a janela primeiro usando criar_janela().")
-    end
+-- Função para criar uma aba
+function UI.criar_aba(nome)
+    local Sidebar = UI.MenuFrame:FindFirstChildOfClass("Frame") -- Encontre a barra lateral
+    local Tab = Instance.new("TextButton")
+    Tab.Size = UDim2.new(1, 0, 0, CONFIG.TabHeight)
+    Tab.Text = nome
+    Tab.TextColor3 = CONFIG.TabTextColor
+    Tab.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Tab.Parent = Sidebar
 
-    local BodyFrame = UI.MenuFrame:FindFirstChildOfClass("Frame")
-    local Button = Instance.new("TextButton")
-    Button.Size = UDim2.new(0.8, 0, 0, 50)
-    Button.Position = UDim2.new(0.1, 0, #BodyFrame:GetChildren() * 0.1, 0) -- Adiciona espaçamento entre botões
-    Button.Text = nome
-    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    Button.Parent = BodyFrame
+    Tab.MouseButton1Click:Connect(function()
+        UI.atualizar_conteudo(Tab) -- Atualiza o conteúdo para a aba selecionada
+    end)
 
-    Button.MouseButton1Click:Connect(callback)
-
-    return Button
+    return Tab
 end
 
--- Função para tornar o menu arrastável
+-- Função para atualizar o conteúdo do corpo do menu com base na aba atual
+function UI.atualizar_conteudo(tab)
+    if UI.CurrentTab then
+        UI.CurrentTab.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Resetar a cor da aba anterior
+    end
+
+    UI.CurrentTab = tab
+    UI.CurrentTab.BackgroundColor3 = Color3.fromRGB(60, 60, 60) -- Destaque a aba selecionada
+
+    -- Limpar o corpo anterior
+    for _, child in ipairs(UI.MenuFrame:GetChildren()) do
+        if child:IsA("Frame") and child ~= UI.CurrentTab and child ~= UI.MenuFrame:FindFirstChildOfClass("Frame") then
+            child:Destroy()
+        end
+    end
+
+    -- Exibir o conteúdo da aba atual
+    local BodyFrame = UI.MenuFrame:FindFirstChildOfClass("Frame")
+    local ContentFrame = Instance.new("Frame")
+    ContentFrame.Size = UDim2.new(1, 0, 1, -50)
+    ContentFrame.Position = UDim2.new(0, 0, 0, 50)
+    ContentFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    ContentFrame.Parent = BodyFrame
+
+    -- Adicionar um exemplo de botão na aba atual
+    local ExampleButton = Instance.new("TextButton")
+    ExampleButton.Size = UDim2.new(0.8, 0, 0, 50)
+    ExampleButton.Position = UDim2.new(0.1, 0, 0, 10)
+    ExampleButton.Text = "Botão Exemplo"
+    ExampleButton.Parent = ContentFrame
+end
+
+-- Função para tornar a janela arrastável
 function UI.makeDraggable(frame)
-    local dragging = false
-    local dragInput, mousePos, framePos
+    local dragToggle = nil
+    local dragSpeed = 0.1
+    local dragInput
+    local dragStart = nil
+    local startPos = nil
 
     frame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            mousePos = input.Position
-            framePos = frame.Position
+            dragToggle = true
+            dragStart = input.Position
+            startPos = frame.Position
 
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
+                    dragToggle = false
                 end
             end)
         end
@@ -170,12 +221,13 @@ function UI.makeDraggable(frame)
         end
     end)
 
-    UserInputService.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            local delta = input.Position - mousePos
-            frame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input == dragInput and dragToggle then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
     end)
 end
 
-return UI
+-- Inicializar a UI
+UI.criar_janela()
