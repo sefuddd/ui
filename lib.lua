@@ -238,6 +238,7 @@ function UIlib:Janela()
             return TextBox, function() return Conteudo end  -- Retornar o TextBox e uma função para acessar Conteudo
         end
 
+        -- Slider
         function UIlib:Slider(config)
             local SliderFrame = Instance.new("Frame")
             SliderFrame.Size = UDim2.new(1, -10, 0, 50)  -- Tamanho do Frame
@@ -301,11 +302,6 @@ function UIlib:Janela()
             local function updateValue()
                 ValueLabel.Text = tostring(CurrentValue)
                 SliderHandle.Position = UDim2.new((CurrentValue - MinValue) / (MaxValue - MinValue), -10, 0, -5)  -- Atualiza a posição do handle
-        
-                -- Chama a função de callback se existir
-                if config.Callback then
-                    config.Callback(CurrentValue)
-                end
             end
         
             -- Evento de arrastar o slider
@@ -320,6 +316,10 @@ function UIlib:Janela()
             SliderHandle.InputEnded:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     dragging = false
+                    -- Chama a função de callback apenas ao soltar o slider
+                    if config.Callback then
+                        config.Callback(CurrentValue)
+                    end
                 end
             end)
         
@@ -342,6 +342,7 @@ function UIlib:Janela()
         
             return SliderFrame  -- Retornar o Frame do Slider
         end
+
 
         
         -- Função para adicionar Switch na Tab
