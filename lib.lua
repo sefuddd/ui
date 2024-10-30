@@ -239,6 +239,8 @@ function UIlib:Janela()
         end
 
         -- Slider
+        local UserInputService = game:GetService("UserInputService")
+
         function UIlib:Slider(config)
             local SliderFrame = Instance.new("Frame")
             SliderFrame.Size = UDim2.new(1, -10, 0, 50)  -- Tamanho do Frame
@@ -310,6 +312,18 @@ function UIlib:Janela()
             SliderHandle.InputBegan:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     dragging = true
+                    UserInputService.InputChanged:Connect(function(input)
+                        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                            local mouseX = input.Position.X
+                            local sliderX = SliderBackground.AbsolutePosition.X
+                            local sliderWidth = SliderBackground.AbsoluteSize.X
+        
+                            -- Calcula o novo valor com base na posição do mouse
+                            local newValue = MinValue + (MaxValue - MinValue) * ((mouseX - sliderX) / sliderWidth)
+                            CurrentValue = math.clamp(newValue, MinValue, MaxValue)  -- Garante que o valor esteja dentro dos limites
+                            updateValue()
+                        end
+                    end)
                 end
             end)
         
@@ -323,25 +337,13 @@ function UIlib:Janela()
                 end
             end)
         
-            SliderBackground.InputChanged:Connect(function(input)
-                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                    local mouseX = input.Position.X
-                    local sliderX = SliderBackground.AbsolutePosition.X
-                    local sliderWidth = SliderBackground.AbsoluteSize.X
-        
-                    -- Calcula o novo valor com base na posição do mouse
-                    local newValue = MinValue + (MaxValue - MinValue) * ((mouseX - sliderX) / sliderWidth)
-                    CurrentValue = math.clamp(newValue, MinValue, MaxValue)  -- Garante que o valor esteja dentro dos limites
-                    updateValue()
-                end
-            end)
-        
             updateValue()  -- Atualiza o valor inicial
         
             print("Slider criado: " .. TitleLabel.Text)  -- Mensagem para verificar a criação do Slider
         
             return SliderFrame  -- Retornar o Frame do Slider
         end
+
 
 
         
