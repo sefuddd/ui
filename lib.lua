@@ -264,7 +264,8 @@ function UIlib:Janela()
         -- Widget: Label
         function UIlib:Label(config)
             local labelContainer = Instance.new("Frame")
-            labelContainer.Size = UDim2.new(1, 0, 0, 30)
+            labelContainer.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
+            labelText.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45) 
             labelContainer.BackgroundColor3 = config.Fundo or Color3.new(0.1, 0.1, 0.1)
             labelContainer.BorderSizePixel = 1
         
@@ -275,7 +276,7 @@ function UIlib:Janela()
             labelText.TextSize = config.TamanhoFonte or 16
             labelText.TextColor3 = config.CorTexto or Color3.new(1, 1, 1)
             labelText.BackgroundTransparency = 1
-            labelText.Position = UDim2.new(0.5, 0, 0, 0)
+            labelText.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45) 
             labelText.AnchorPoint = config.Posicao == "centro" and Vector2.new(0.5, 0) or Vector2.new(0, 0)
         
             if config.Posicao == "direita" then
@@ -291,13 +292,14 @@ function UIlib:Janela()
         end
 
         -- Widget: Textbox
-        function Tab:Textbox(config)
+        function UIlib:Textbox(config)
             local textboxContainer = Instance.new("Frame")
-            textboxContainer.Size = UDim2.new(1, 0, 0, 30)
+            textboxContainer.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
+            textbox.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45) 
             textboxContainer.BackgroundTransparency = 1
         
             local textbox = Instance.new("TextBox")
-            textbox.Size = UDim2.new(1, -10, 1, 0)
+            textbox.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
             textbox.PlaceholderText = config.Placeholder or "Digite aqui..."
             textbox.Font = Enum.Font.SourceSans
             textbox.TextSize = 14
