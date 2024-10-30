@@ -346,57 +346,6 @@ function UIlib:Janela()
 
 
         -- Dropdown
-        local UserInputService = game:GetService("UserInputService")
-
-        
-        function UIlib:Dropdown(config)
-            local DropdownFrame = Instance.new("Frame")
-            DropdownFrame.Size = UDim2.new(1, -10, 0, 60)  -- Aumentar altura para acomodar título e botão
-
-        
-            -- Função para atualizar o botão com os itens selecionados
-            local function updateButton()
-                local selectedCount = #selectedItems
-                local selectedCount = 0
-                local selectedNames = {}
-        
-                for item in pairs(selectedItems) do
-                    if selectedItems[item] then
-                        table.insert(selectedNames, item)
-                        selectedCount = selectedCount + 1
-                    end
-                end
-        
-                if selectedCount > 0 then
-                    DropdownButton.Text = "Selecionado: " .. table.concat(selectedItems, ", ")
-                    DropdownButton.Text = "Selecionado: " .. table.concat(selectedNames, ", ")
-                else
-                    DropdownButton.Text = "Selecione uma opção"
-                end
-                        selectedItems[option] = nil
-                    else
-                        -- Adiciona a seleção se não estiver selecionado
-                        if config.MaxSelections and #selectedItems < config.MaxSelections then
-                        if config.MaxSelections and table.count(selectedItems) < config.MaxSelections then
-                            selectedItems[option] = true
-                        end
-                    end
-                    updateButton()  -- Atualiza o botão com as seleções
-                end)
-            end
-        
-            -- Abrir e fechar o dropdown
-            DropdownButton.MouseButton1Click:Connect(function()
-                DropdownContent.Visible = not DropdownContent.Visible
-            end)
-        
-            -- Atualiza o botão ao inicializar
-            updateButton()
-        
-            print("Dropdown criado: " .. TitleLabel.Text)  -- Mensagem para verificar a criação do Dropdown
-        
-            return selectedItems  -- Retorna a tabela de itens selecionados
-        end
 
 
         
