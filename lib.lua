@@ -201,12 +201,22 @@ function UIlib:Janela()
             Label.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
             Label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
             Label.BackgroundTransparency = 0  -- Definindo a transparência do fundo como 0 (opaco)
-            Label.Parent = TabContent
+            Label.Parent = TabContent  -- Adicionando o Label ao TabContent
+        
+            -- Ajustar alinhamento do texto
+            if config.Posicao == "centro" then
+                Label.TextXAlignment = Enum.TextXAlignment.Center
+            elseif config.Posicao == "direita" then
+                Label.TextXAlignment = Enum.TextXAlignment.Right
+            else
+                Label.TextXAlignment = Enum.TextXAlignment.Left  -- Por padrão, ou se for "esquerda"
+            end
         
             print("Label criado: " .. Label.Text)  -- Mensagem para verificar a criação do Label
         
             return Label
         end
+
 
 
         
