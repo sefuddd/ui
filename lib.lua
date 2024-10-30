@@ -163,7 +163,7 @@ function UIlib:Janela()
         TabContent.BackgroundTransparency = 1
         TabContent.Visible = false
         TabContent.Parent = Body
-
+        
         TabButton.MouseButton1Click:Connect(function()
             for _, child in ipairs(Body:GetChildren()) do
                 child.Visible = false
@@ -202,7 +202,7 @@ function UIlib:Janela()
             Label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
             Label.BackgroundTransparency = 0  -- Definindo a transparência do fundo como 0 (opaco)
             Label.Parent = TabContent  -- Adicionando o Label ao TabContent
-
+        
             -- Ajustar alinhamento do texto
             if config.Posicao == "centro" then
                 Label.TextXAlignment = Enum.TextXAlignment.Center
@@ -226,15 +226,15 @@ function UIlib:Janela()
             TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
             TextBox.BackgroundTransparency = 0  -- Definindo a transparência do fundo como 0 (opaco)
             TextBox.Parent = TabContent  -- Adicionando o TextBox ao TabContent
-
+        
             local Conteudo = TextBox.Text  -- Variável para armazenar o conteúdo
-
+        
             -- Atualizar a variável Conteudo sempre que o texto mudar
             TextBox:GetPropertyChangedSignal("Text"):Connect(function()
                 Conteudo = TextBox.Text
             end)
-
-
+        
+        
             return TextBox, function() return Conteudo end  -- Retornar o TextBox e uma função para acessar Conteudo
         end
 
@@ -248,12 +248,12 @@ function UIlib:Janela()
             SliderFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
             SliderFrame.BackgroundTransparency = 0  -- Opaco
             SliderFrame.Parent = TabContent
-
+        
             -- Canto arredondado
             local UICorner = Instance.new("UICorner")
             UICorner.CornerRadius = UDim.new(0, 10)  -- Arredondar os cantos
             UICorner.Parent = SliderFrame
-
+        
             -- Texto do Slider
             local TitleLabel = Instance.new("TextLabel")
             TitleLabel.Size = UDim2.new(1, 0, 0, 20)  -- Tamanho do texto
@@ -264,7 +264,7 @@ function UIlib:Janela()
             TitleLabel.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
             TitleLabel.BackgroundTransparency = 1  -- Transparente
             TitleLabel.Parent = SliderFrame
-
+        
             -- Valor do Slider
             local ValueLabel = Instance.new("TextLabel")
             ValueLabel.Size = UDim2.new(0, 50, 0, 20)  -- Tamanho do valor
@@ -275,40 +275,40 @@ function UIlib:Janela()
             ValueLabel.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
             ValueLabel.BackgroundTransparency = 1  -- Transparente
             ValueLabel.Parent = SliderFrame
-
+        
             -- Slider Background
             local SliderBackground = Instance.new("Frame")
             SliderBackground.Size = UDim2.new(1, 0, 0, 10)  -- Tamanho do fundo do slider
             SliderBackground.Position = UDim2.new(0, 0, 0.5, -5)  -- Centralizado verticalmente
             SliderBackground.BackgroundColor3 = Color3.fromRGB(220, 220, 220)  -- Cor do fundo
             SliderBackground.Parent = SliderFrame
-
+        
             -- Slider Handle
             local SliderHandle = Instance.new("Frame")
             SliderHandle.Size = UDim2.new(0, 20, 0, 20)  -- Tamanho do handle
             SliderHandle.Position = UDim2.new(0, 0, 0, -5)  -- Posição do handle
             SliderHandle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Cor do handle
             SliderHandle.Parent = SliderBackground
-
+        
             -- Canto arredondado para o handle
             local UICornerHandle = Instance.new("UICorner")
             UICornerHandle.CornerRadius = UDim.new(1, 0)  -- Arredondar completamente
             UICornerHandle.Parent = SliderHandle
-
+        
             -- Definindo limites do slider
             local MinValue = config.Min or 0
             local MaxValue = config.Max or 100
             local CurrentValue = MinValue
-
+        
             -- Função para atualizar o valor
             local function updateValue()
                 ValueLabel.Text = tostring(CurrentValue)
                 SliderHandle.Position = UDim2.new((CurrentValue - MinValue) / (MaxValue - MinValue), -10, 0, -5)  -- Atualiza a posição do handle
             end
-
+        
             -- Evento de arrastar o slider
             local dragging = false
-
+        
             SliderHandle.InputBegan:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     dragging = true
@@ -317,7 +317,7 @@ function UIlib:Janela()
                             local mouseX = input.Position.X
                             local sliderX = SliderBackground.AbsolutePosition.X
                             local sliderWidth = SliderBackground.AbsoluteSize.X
-
+        
                             -- Calcula o novo valor com base na posição do mouse
                             local newValue = MinValue + (MaxValue - MinValue) * ((mouseX - sliderX) / sliderWidth)
                             CurrentValue = math.clamp(newValue, MinValue, MaxValue)  -- Garante que o valor esteja dentro dos limites
@@ -326,7 +326,7 @@ function UIlib:Janela()
                     end)
                 end
             end)
-
+        
             SliderHandle.InputEnded:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     dragging = false
@@ -336,66 +336,24 @@ function UIlib:Janela()
                     end
                 end
             end)
-
+        
             updateValue()  -- Atualiza o valor inicial
-
+        
             print("Slider criado: " .. TitleLabel.Text)  -- Mensagem para verificar a criação do Slider
-
+        
             return SliderFrame  -- Retornar o Frame do Slider
         end
 
 
         -- Dropdown
         local UserInputService = game:GetService("UserInputService")
+
         
         function UIlib:Dropdown(config)
             local DropdownFrame = Instance.new("Frame")
             DropdownFrame.Size = UDim2.new(1, -10, 0, 60)  -- Aumentar altura para acomodar título e botão
-            DropdownFrame.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posição vertical
-            DropdownFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
-            DropdownFrame.BackgroundTransparency = 0  -- Opaco
-            DropdownFrame.Parent = TabContent
 
-            -- Canto arredondado
-            local UICorner = Instance.new("UICorner")
-            UICorner.CornerRadius = UDim.new(0, 10)  -- Arredondar os cantos
-            UICorner.Parent = DropdownFrame
-
-            -- Texto do Dropdown
-            local TitleLabel = Instance.new("TextLabel")
-            TitleLabel.Size = UDim2.new(1, 0, 0, 20)  -- Tamanho do texto
-            TitleLabel.Position = UDim2.new(0, 0, 0, 0)  -- Posição
-            TitleLabel.Text = config.Title or "Dropdown"  -- Título do dropdown
-            TitleLabel.Font = Enum.Font.Roboto
-            TitleLabel.TextSize = 14
-            TitleLabel.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
-            TitleLabel.BackgroundTransparency = 1  -- Transparente
-            TitleLabel.Parent = DropdownFrame
-
-            -- Dropdown Button
-            local DropdownButton = Instance.new("TextButton")
-            DropdownButton.Size = UDim2.new(1, 0, 0, 30)  -- Tamanho do botão
-            DropdownButton.Position = UDim2.new(0, 0, 0.3, 0)  -- Posiciona abaixo do título
-            DropdownButton.Text = "Selecione uma opção"  -- Texto do botão
-            DropdownButton.Font = Enum.Font.Roboto
-            DropdownButton.TextSize = 14
-            DropdownButton.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
-            DropdownButton.BackgroundColor3 = Color3.fromRGB(220, 220, 220)  -- Cor do fundo
-            DropdownButton.Parent = DropdownFrame
-
-            -- Dropdown Content (Lista de opções)
-            local DropdownContent = Instance.new("Frame")
-            DropdownContent.Size = UDim2.new(1, 0, 0, 0)  -- Inicialmente oculto
-            DropdownContent.Position = UDim2.new(0, 0, 1, 0)
-            DropdownContent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
-            DropdownContent.Visible = false  -- Ocultar inicialmente
-            DropdownContent.Parent = DropdownFrame
-
-            -- Canto arredondado para o conteúdo do dropdown
-            local UICornerContent = Instance.new("UICorner")
-            UICornerContent.CornerRadius = UDim.new(0, 10)
-            UICornerContent.Parent = DropdownContent
-
+        
             -- Função para atualizar o botão com os itens selecionados
             local function updateButton()
                 local selectedCount = #selectedItems
@@ -415,31 +373,6 @@ function UIlib:Janela()
                 else
                     DropdownButton.Text = "Selecione uma opção"
                 end
-            end
-
-            -- Variável para armazenar as seleções
-            local selectedItems = {}
-
-            -- Adiciona as opções ao dropdown
-            for _, option in ipairs(config.Options) do
-                local OptionButton = Instance.new("TextButton")
-                OptionButton.Size = UDim2.new(1, 0, 0, 30)  -- Tamanho do botão de opção
-                OptionButton.Text = option  -- Texto da opção
-                OptionButton.Font = Enum.Font.Roboto
-                OptionButton.TextSize = 14
-                OptionButton.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
-                OptionButton.BackgroundColor3 = Color3.fromRGB(240, 240, 240)  -- Cor do fundo
-                OptionButton.Parent = DropdownContent
-
-                -- Canto arredondado para os botões de opção
-                local UICornerOption = Instance.new("UICorner")
-                UICornerOption.CornerRadius = UDim.new(0, 5)
-                UICornerOption.Parent = OptionButton
-
-                -- Evento de seleção de opção
-                OptionButton.MouseButton1Click:Connect(function()
-                    if selectedItems[option] then
-                        -- Remove a seleção se já estiver selecionado
                         selectedItems[option] = nil
                     else
                         -- Adiciona a seleção se não estiver selecionado
@@ -451,22 +384,22 @@ function UIlib:Janela()
                     updateButton()  -- Atualiza o botão com as seleções
                 end)
             end
-
+        
             -- Abrir e fechar o dropdown
             DropdownButton.MouseButton1Click:Connect(function()
                 DropdownContent.Visible = not DropdownContent.Visible
             end)
-
+        
             -- Atualiza o botão ao inicializar
             updateButton()
-
+        
             print("Dropdown criado: " .. TitleLabel.Text)  -- Mensagem para verificar a criação do Dropdown
-
+        
             return selectedItems  -- Retorna a tabela de itens selecionados
         end
 
 
-
+        
         -- Função para adicionar Switch na Tab
         function UIlib:Switch(config)
             local Switch = Instance.new("TextButton")
