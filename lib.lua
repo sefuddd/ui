@@ -122,19 +122,21 @@ function UIlib:Janela()
     DefaultText.TextSize = 16
     DefaultText.TextColor3 = Color3.new(1, 1, 1)
     DefaultText.BackgroundTransparency = 1
-    DefaultText.Size = UDim2.new(1, -20, 0, 50)
-    DefaultText.Position = UDim2.new(0, 10, 0, 10)
+    DefaultText.Size = UDim2.new(0, 200, 0, 50)  -- Define o tamanho do texto
+    DefaultText.AnchorPoint = Vector2.new(0.5, 0.5)  -- Centraliza o ponto de ancoragem
+    DefaultText.Position = UDim2.new(0.5, 0, 0.4, 0)  -- Posiciona no centro superior do Body
     DefaultText.Parent = Body
 
-    -- Botão de convite do Discord
+    -- Botão de convite do Discord centralizado abaixo do texto
     local DiscordButton = Instance.new("TextButton")
     DiscordButton.Text = "Entrar no Discord"
     DiscordButton.Font = Enum.Font.Roboto
     DiscordButton.TextSize = 14
     DiscordButton.TextColor3 = Color3.new(1, 1, 1)
     DiscordButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    DiscordButton.Size = UDim2.new(0, 150, 0, 40)
-    DiscordButton.Position = UDim2.new(0, 10, 0, 70)
+    DiscordButton.Size = UDim2.new(0, 150, 0, 40)  -- Define o tamanho do botão
+    DiscordButton.AnchorPoint = Vector2.new(0.5, 0.5)  -- Centraliza o ponto de ancoragem
+    DiscordButton.Position = UDim2.new(0.5, 0, 0.6, 0)  -- Posiciona abaixo do texto no centro do Body
     DiscordButton.Parent = Body
 
     DiscordButton.MouseButton1Click:Connect(function()
