@@ -291,8 +291,8 @@ function UIlib:Janela()
             labelContainer.Parent = self.Parent
         end
 
-        -- Widget: Textbox
-        function UIlib:Textbox(config)
+        -- Textbox
+        function Menu:Textbox(config)
             local textboxContainer = Instance.new("Frame")
             textboxContainer.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
             textbox.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45) 
