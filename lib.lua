@@ -201,7 +201,7 @@ function UIlib:Janela()
             Label.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
             Label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
             Label.BackgroundTransparency = 0  -- Definindo a transparência do fundo como 0 (opaco)
-            Label.Parent = TabContent  -- Adicionando o Label ao TabContent
+            Label.Parent = Body
         
             print("Label criado: " .. Label.Text)  -- Mensagem para verificar a criação do Label
         
