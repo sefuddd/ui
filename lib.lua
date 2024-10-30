@@ -292,14 +292,13 @@ function UIlib:Janela()
         end
 
         -- Textbox
-        function Menu:Textbox(config)
+        function UIlib:Textbox(config)
             local textboxContainer = Instance.new("Frame")
-            textboxContainer.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
-            textbox.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45) 
+            textboxContainer.Size = UDim2.new(1, 0, 0, 30)
             textboxContainer.BackgroundTransparency = 1
         
             local textbox = Instance.new("TextBox")
-            textbox.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
+            textbox.Size = UDim2.new(1, -10, 1, 0)
             textbox.PlaceholderText = config.Placeholder or "Digite aqui..."
             textbox.Font = Enum.Font.SourceSans
             textbox.TextSize = 14
