@@ -190,129 +190,26 @@ function UIlib:Janela()
             return Button
         end
 
-        -- Widget: Slider
-        function UIlib:Slider(config)
-            local min, max = config.Minimo or 1, config.Maximo or 100
-            local valorAtual = min
-        
-            -- Criar o container do slider
-            local sliderContainer = Instance.new("Frame")
-            sliderContainer.Name = "SliderContainer"
-            sliderContainer.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
-            sliderContainer.BackgroundTransparency = 1
-        
-            -- Texto descritivo
-            local label = Instance.new("TextLabel")
-            label.Text = config.Nome or "Slider"
-            label.Position = UDim2.new(0, 5, 0, -20)
-            label.Size = UDim2.new(0, 100, 0, 20)
-            label.Font = Enum.Font.SourceSans
-            label.TextSize = 16
-            label.TextColor3 = Color3.new(1, 1, 1)
-            label.TextXAlignment = Enum.TextXAlignment.Left
-            label.BackgroundTransparency = 1
-            label.Parent = sliderContainer
-        
-            -- Barra do slider
-            local sliderBar = Instance.new("Frame")
-            sliderBar.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
-            sliderBar.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posicionamento vertical para evitar sobreposição
-            sliderBar.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-            sliderBar.Parent = sliderContainer
-        
-            -- Indicador do slider
-            local sliderIndicator = Instance.new("Frame")
-            sliderIndicator.Size = UDim2.new(0, 15, 0, 15)
-            sliderIndicator.BackgroundColor3 = Color3.new(0.4, 0.6, 1)
-            sliderIndicator.Parent = sliderBar
-        
-            -- Texto do valor atual
-            local valorTexto = Instance.new("TextLabel")
-            valorTexto.Text = tostring(valorAtual)
-            valorTexto.Size = UDim2.new(0, 50, 0, 20)
-            valorTexto.Position = UDim2.new(0.5, -25, 0, -25)
-            valorTexto.Font = Enum.Font.SourceSans
-            valorTexto.TextSize = 14
-            valorTexto.TextColor3 = Color3.new(1, 1, 1)
-            valorTexto.BackgroundTransparency = 1
-            valorTexto.Parent = sliderBar
-        
-            -- Atualizar valor ao arrastar o slider
-            sliderBar.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    local moving
-                    moving = game:GetService("UserInputService").InputChanged:Connect(function(input)
-                        if input.UserInputType == Enum.UserInputType.MouseMovement then
-                            local x = math.clamp(input.Position.X - sliderBar.AbsolutePosition.X, 0, sliderBar.AbsoluteSize.X)
-                            sliderIndicator.Position = UDim2.new(0, x, 0, 0)
-                            valorAtual = math.floor(min + (x / sliderBar.AbsoluteSize.X) * (max - min))
-                            valorTexto.Text = tostring(valorAtual)
-                        end
-                    end)
-                    input.InputEnded:Connect(function()
-                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                            moving:Disconnect()
-                        end
-                    end)
-                end
-            end)
-        
-            sliderContainer.Parent = self.Parent
-        end
-
-        
-        -- Widget: Label
+        -- Função para adicionar um Label na Tab
         function UIlib:Label(config)
-            local labelContainer = Instance.new("Frame")
-            labelContainer.Size = UDim2.new(1, 0, 0, 30)
-            labelContainer.BackgroundColor3 = config.Fundo or Color3.new(0.1, 0.1, 0.1)
-            labelContainer.BorderSizePixel = 1
+            local Label = Instance.new("TextLabel")
+            Label.Size = UDim2.new(1, -10, 0, 40)  -- Tamanho do Label
+            Label.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posição vertical
+            Label.Text = config.Text or "Label"  -- Texto do Label
+            Label.Font = Enum.Font.Roboto  -- Fonte do texto
+            Label.TextSize = 14  -- Tamanho do texto
+            Label.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
+            Label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
+            Label.BackgroundTransparency = 0  -- Definindo a transparência do fundo como 0 (opaco)
+            Label.Parent = TabContent  -- Adicionando o Label ao TabContent
         
-            local labelText = Instance.new("TextLabel")
-            labelText.Text = config.Texto or "Label"
-            labelText.Size = UDim2.new(1, -10, 1, 0)
-            labelText.Font = Enum.Font.SourceSans
-            labelText.TextSize = config.TamanhoFonte or 16
-            labelText.TextColor3 = config.CorTexto or Color3.new(1, 1, 1)
-            labelText.BackgroundTransparency = 1
-            labelText.Position = UDim2.new(0.5, 0, 0, 0)
-            labelText.AnchorPoint = config.Posicao == "centro" and Vector2.new(0.5, 0) or Vector2.new(0, 0)
+            print("Label criado: " .. Label.Text)  -- Mensagem para verificar a criação do Label
         
-            if config.Posicao == "direita" then
-                labelText.TextXAlignment = Enum.TextXAlignment.Right
-            elseif config.Posicao == "esquerda" then
-                labelText.TextXAlignment = Enum.TextXAlignment.Left
-            else
-                labelText.TextXAlignment = Enum.TextXAlignment.Center
-            end
-        
-            labelText.Parent = labelContainer
-            labelContainer.Parent = self.Parent
+            return Label
         end
 
-        -- Textbox
-        function UIlib:Textbox(config)
-            local textboxContainer = Instance.new("Frame")
-            textboxContainer.Size = UDim2.new(1, 0, 0, 30)
-            textboxContainer.BackgroundTransparency = 1
-        
-            local textbox = Instance.new("TextBox")
-            textbox.Size = UDim2.new(1, -10, 1, 0)
-            textbox.PlaceholderText = config.Placeholder or "Digite aqui..."
-            textbox.Font = Enum.Font.SourceSans
-            textbox.TextSize = 14
-            textbox.BackgroundTransparency = 0.5
-            textbox.TextColor3 = Color3.new(0.9, 0.9, 0.9)
-            textbox.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-            textbox.Parent = textboxContainer
-        
-            function self:Conteudo()
-                return textbox.Text
-            end
-        
-            textboxContainer.Parent = self.Parent
-        end
 
+        
         -- Função para adicionar Switch na Tab
         function UIlib:Switch(config)
             local Switch = Instance.new("TextButton")
