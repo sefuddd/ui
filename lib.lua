@@ -398,13 +398,14 @@ function UIlib:Janela()
             UICornerContent.Parent = DropdownContent
         
             -- Variável para armazenar as seleções
-            local selectedItems = {}
+            local selectedItems = {}  -- Inicialização correta da tabela
         
             -- Função para atualizar o botão com os itens selecionados
             local function updateButton()
                 local selectedCount = 0
                 local selectedNames = {}
         
+                -- Verifica os itens selecionados
                 for item in pairs(selectedItems) do
                     if selectedItems[item] then
                         table.insert(selectedNames, item)
@@ -412,6 +413,7 @@ function UIlib:Janela()
                     end
                 end
         
+                -- Atualiza o texto do botão
                 if selectedCount > 0 then
                     DropdownButton.Text = "Selecionado: " .. table.concat(selectedNames, ", ")
                 else
@@ -463,6 +465,7 @@ function UIlib:Janela()
         
             return selectedItems  -- Retorna a tabela de itens selecionados
         end
+
 
 
         
