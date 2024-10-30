@@ -198,7 +198,7 @@ function UIlib:Janela()
             -- Criar o container do slider
             local sliderContainer = Instance.new("Frame")
             sliderContainer.Name = "SliderContainer"
-            sliderContainer.Size = UDim2.new(1, 0, 0, 50)
+            sliderContainer.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
             sliderContainer.BackgroundTransparency = 1
         
             -- Texto descritivo
@@ -215,8 +215,8 @@ function UIlib:Janela()
         
             -- Barra do slider
             local sliderBar = Instance.new("Frame")
-            sliderBar.Size = UDim2.new(1, -10, 0, 10)
-            sliderBar.Position = UDim2.new(0, 5, 0.5, 0)
+            sliderBar.Size = UDim2.new(1, -10, 0, 40)  -- Ocupa toda a largura do espaço disponível
+            sliderBar.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posicionamento vertical para evitar sobreposição
             sliderBar.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
             sliderBar.Parent = sliderContainer
         
