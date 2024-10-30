@@ -389,6 +389,7 @@ function UIlib:Janela()
             DropdownContent.Size = UDim2.new(1, 0, 0, #config.Options * 30)  -- Altura para acomodar todas as opções
             DropdownContent.Position = UDim2.new(0, 0, 1, 0)  -- Abaixo do botão
             DropdownContent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
+            DropdownContent.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
             DropdownContent.Visible = false  -- Ocultar inicialmente
             DropdownContent.Parent = DropdownFrame
         
