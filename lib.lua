@@ -345,11 +345,12 @@ function UIlib:Janela()
         end
 
 
+        -- Dropdown
         local UserInputService = game:GetService("UserInputService")
 
         function UIlib:Dropdown(config)
             local DropdownFrame = Instance.new("Frame")
-            DropdownFrame.Size = UDim2.new(1, -10, 0, 50)  -- Tamanho do Frame
+            DropdownFrame.Size = UDim2.new(1, -10, 0, 60)  -- Aumentar altura para acomodar título e botão
             DropdownFrame.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posição vertical
             DropdownFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
             DropdownFrame.BackgroundTransparency = 0  -- Opaco
@@ -371,13 +372,10 @@ function UIlib:Janela()
             TitleLabel.BackgroundTransparency = 1  -- Transparente
             TitleLabel.Parent = DropdownFrame
         
-            -- Variável para armazenar as seleções
-            local selectedItems = {}
-        
             -- Dropdown Button
             local DropdownButton = Instance.new("TextButton")
             DropdownButton.Size = UDim2.new(1, 0, 0, 30)  -- Tamanho do botão
-            DropdownButton.Position = UDim2.new(0, 0, 0.5, -15)  -- Centralizado verticalmente
+            DropdownButton.Position = UDim2.new(0, 0, 0.3, 0)  -- Posiciona abaixo do título
             DropdownButton.Text = "Selecione uma opção"  -- Texto do botão
             DropdownButton.Font = Enum.Font.Roboto
             DropdownButton.TextSize = 14
@@ -407,6 +405,9 @@ function UIlib:Janela()
                     DropdownButton.Text = "Selecione uma opção"
                 end
             end
+        
+            -- Variável para armazenar as seleções
+            local selectedItems = {}
         
             -- Adiciona as opções ao dropdown
             for _, option in ipairs(config.Options) do
@@ -451,6 +452,7 @@ function UIlib:Janela()
         
             return selectedItems  -- Retorna a tabela de itens selecionados
         end
+
 
         
         -- Função para adicionar Switch na Tab
