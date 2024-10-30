@@ -386,7 +386,7 @@ function UIlib:Janela()
         
             -- Dropdown Content (Lista de opções)
             local DropdownContent = Instance.new("Frame")
-            DropdownContent.Size = UDim2.new(1, 0, 0, #config.Options * 30)  -- Altura para acomodar todas as opções
+            DropdownContent.Size = UDim2.new(1, 0, 0, math.min(#config.Options, 5) * 30)  -- Altura para acomodar as opções (máximo de 5 visíveis)
             DropdownContent.Position = UDim2.new(0, 0, 1, 0)  -- Abaixo do botão
             DropdownContent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
             DropdownContent.Visible = false  -- Ocultar inicialmente
@@ -396,6 +396,9 @@ function UIlib:Janela()
             local UICornerContent = Instance.new("UICorner")
             UICornerContent.CornerRadius = UDim.new(0, 10)
             UICornerContent.Parent = DropdownContent
+        
+            -- Variável para armazenar as seleções
+            local selectedItems = {}
         
             -- Função para atualizar o botão com os itens selecionados
             local function updateButton()
@@ -415,9 +418,6 @@ function UIlib:Janela()
                     DropdownButton.Text = "Selecione uma opção"
                 end
             end
-        
-            -- Variável para armazenar as seleções
-            local selectedItems = {}
         
             -- Adiciona as opções ao dropdown
             for index, option in ipairs(config.Options) do
