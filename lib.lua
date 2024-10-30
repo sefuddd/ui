@@ -425,7 +425,7 @@ function UIlib:Janela()
             for index, option in ipairs(config.Options) do
                 local OptionButton = Instance.new("TextButton")
                 OptionButton.Size = UDim2.new(1, 0, 0, 30)  -- Tamanho do botão de opção
-                OptionButton.Position = UDim2.new(0, 0, (index - 1) * (30 / DropdownContent.Size.Y.Scale), 0)  -- Define a posição correta para cada opção
+                OptionButton.Position = UDim2.new(0, 0, (index - 1) * 30, 0)  -- Define a posição correta para cada opção
                 OptionButton.Text = option  -- Texto da opção
                 OptionButton.Font = Enum.Font.Roboto
                 OptionButton.TextSize = 14
@@ -465,6 +465,7 @@ function UIlib:Janela()
         
             return selectedItems  -- Retorna a tabela de itens selecionados
         end
+
 
 
 
