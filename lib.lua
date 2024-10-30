@@ -217,8 +217,30 @@ function UIlib:Janela()
             return Label
         end
 
-
-
+        function UIlib:TextBox(config)
+            local TextBox = Instance.new("TextBox")
+            TextBox.Size = UDim2.new(1, -10, 0, 40)  -- Tamanho do TextBox
+            TextBox.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posição vertical
+            TextBox.Text = config.Text or ""  -- Texto inicial do TextBox
+            TextBox.Font = Enum.Font.Roboto  -- Fonte do texto
+            TextBox.TextSize = 14  -- Tamanho do texto
+            TextBox.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
+            TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
+            TextBox.BackgroundTransparency = 0  -- Definindo a transparência do fundo como 0 (opaco)
+            TextBox.Parent = TabContent  -- Adicionando o TextBox ao TabContent
+        
+            local Conteudo = TextBox.Text  -- Variável para armazenar o conteúdo
+        
+            -- Atualizar a variável Conteudo sempre que o texto mudar
+            TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+                Conteudo = TextBox.Text
+                print("Conteúdo atualizado: " .. Conteudo)  -- Verificação do conteúdo atualizado
+            end)
+        
+            print("TextBox criado.")  -- Mensagem para verificar a criação do TextBox
+        
+            return TextBox, function() return Conteudo end  -- Retornar o TextBox e uma função para acessar Conteudo
+        end
         
         -- Função para adicionar Switch na Tab
         function UIlib:Switch(config)
