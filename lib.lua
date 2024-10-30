@@ -115,6 +115,34 @@ function UIlib:Janela()
     Body.BackgroundTransparency = 1
     Body.Parent = MainFrame
 
+        -- Texto padrão no Body
+    local DefaultText = Instance.new("TextLabel")
+    DefaultText.Text = "Acesse nosso servidor Discord"
+    DefaultText.Font = Enum.Font.Roboto
+    DefaultText.TextSize = 16
+    DefaultText.TextColor3 = Color3.new(1, 1, 1)
+    DefaultText.BackgroundTransparency = 1
+    DefaultText.Size = UDim2.new(1, -20, 0, 50)
+    DefaultText.Position = UDim2.new(0, 10, 0, 10)
+    DefaultText.Parent = Body
+
+    -- Botão de convite do Discord
+    local DiscordButton = Instance.new("TextButton")
+    DiscordButton.Text = "Entrar no Discord"
+    DiscordButton.Font = Enum.Font.Roboto
+    DiscordButton.TextSize = 14
+    DiscordButton.TextColor3 = Color3.new(1, 1, 1)
+    DiscordButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    DiscordButton.Size = UDim2.new(0, 150, 0, 40)
+    DiscordButton.Position = UDim2.new(0, 10, 0, 70)
+    DiscordButton.Parent = Body
+
+    DiscordButton.MouseButton1Click:Connect(function()
+        -- Abre o link do Discord
+        local url = "https://discord.gg/n3kE8gMkjx"
+        game:GetService("GuiService"):OpenBrowserWindow(url)
+    end)
+
     -- Função para criar Tabs
     function UIlib:Menu(nome)
         local TabButton = Instance.new("TextButton")
@@ -133,11 +161,6 @@ function UIlib:Janela()
         TabContent.BackgroundTransparency = 1
         TabContent.Visible = false
         TabContent.Parent = Body
-
-        -- Verifique se é a primeira aba; se for, torne-a visível
-        if #Menu:GetChildren() == 1 then
-            TabContent.Visible = true
-        end
         
         TabButton.MouseButton1Click:Connect(function()
             for _, child in ipairs(Body:GetChildren()) do
