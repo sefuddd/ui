@@ -211,9 +211,7 @@ function UIlib:Janela()
             else
                 Label.TextXAlignment = Enum.TextXAlignment.Left  -- Por padrão, ou se for "esquerda"
             end
-        
-            print("Label criado: " .. Label.Text)  -- Mensagem para verificar a criação do Label
-        
+
             return Label
         end
 
@@ -234,13 +232,117 @@ function UIlib:Janela()
             -- Atualizar a variável Conteudo sempre que o texto mudar
             TextBox:GetPropertyChangedSignal("Text"):Connect(function()
                 Conteudo = TextBox.Text
-                print("Conteúdo atualizado: " .. Conteudo)  -- Verificação do conteúdo atualizado
             end)
         
-            print("TextBox criado.")  -- Mensagem para verificar a criação do TextBox
         
             return TextBox, function() return Conteudo end  -- Retornar o TextBox e uma função para acessar Conteudo
         end
+
+        function UIlib:Slider(config)
+            local SliderFrame = Instance.new("Frame")
+            SliderFrame.Size = UDim2.new(1, -10, 0, 50)  -- Tamanho do Frame
+            SliderFrame.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posição vertical
+            SliderFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
+            SliderFrame.BackgroundTransparency = 0  -- Opaco
+            SliderFrame.Parent = TabContent
+        
+            -- Canto arredondado
+            local UICorner = Instance.new("UICorner")
+            UICorner.CornerRadius = UDim.new(0, 10)  -- Arredondar os cantos
+            UICorner.Parent = SliderFrame
+        
+            -- Texto do Slider
+            local TitleLabel = Instance.new("TextLabel")
+            TitleLabel.Size = UDim2.new(1, 0, 0, 20)  -- Tamanho do texto
+            TitleLabel.Position = UDim2.new(0, 0, 0, 0)  -- Posição
+            TitleLabel.Text = config.Title or "Slider"  -- Título do slider
+            TitleLabel.Font = Enum.Font.Roboto
+            TitleLabel.TextSize = 14
+            TitleLabel.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
+            TitleLabel.BackgroundTransparency = 1  -- Transparente
+            TitleLabel.Parent = SliderFrame
+        
+            -- Valor do Slider
+            local ValueLabel = Instance.new("TextLabel")
+            ValueLabel.Size = UDim2.new(0, 50, 0, 20)  -- Tamanho do valor
+            ValueLabel.Position = UDim2.new(0.5, -25, 0.5, -10)  -- Centralizado
+            ValueLabel.Text = tostring(config.Min)  -- Valor inicial
+            ValueLabel.Font = Enum.Font.Roboto
+            ValueLabel.TextSize = 14
+            ValueLabel.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
+            ValueLabel.BackgroundTransparency = 1  -- Transparente
+            ValueLabel.Parent = SliderFrame
+        
+            -- Slider Background
+            local SliderBackground = Instance.new("Frame")
+            SliderBackground.Size = UDim2.new(1, 0, 0, 10)  -- Tamanho do fundo do slider
+            SliderBackground.Position = UDim2.new(0, 0, 0.5, -5)  -- Centralizado verticalmente
+            SliderBackground.BackgroundColor3 = Color3.fromRGB(220, 220, 220)  -- Cor do fundo
+            SliderBackground.Parent = SliderFrame
+        
+            -- Slider Handle
+            local SliderHandle = Instance.new("Frame")
+            SliderHandle.Size = UDim2.new(0, 20, 0, 20)  -- Tamanho do handle
+            SliderHandle.Position = UDim2.new(0, 0, 0, -5)  -- Posição do handle
+            SliderHandle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Cor do handle
+            SliderHandle.Parent = SliderBackground
+        
+            -- Canto arredondado para o handle
+            local UICornerHandle = Instance.new("UICorner")
+            UICornerHandle.CornerRadius = UDim.new(1, 0)  -- Arredondar completamente
+            UICornerHandle.Parent = SliderHandle
+        
+            -- Definindo limites do slider
+            local MinValue = config.Min or 0
+            local MaxValue = config.Max or 100
+            local CurrentValue = MinValue
+        
+            -- Função para atualizar o valor
+            local function updateValue()
+                ValueLabel.Text = tostring(CurrentValue)
+                SliderHandle.Position = UDim2.new((CurrentValue - MinValue) / (MaxValue - MinValue), -10, 0, -5)  -- Atualiza a posição do handle
+        
+                -- Chama a função de callback se existir
+                if config.Callback then
+                    config.Callback(CurrentValue)
+                end
+            end
+        
+            -- Evento de arrastar o slider
+            local dragging = false
+        
+            SliderHandle.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    dragging = true
+                end
+            end)
+        
+            SliderHandle.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    dragging = false
+                end
+            end)
+        
+            SliderBackground.InputChanged:Connect(function(input)
+                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                    local mouseX = input.Position.X
+                    local sliderX = SliderBackground.AbsolutePosition.X
+                    local sliderWidth = SliderBackground.AbsoluteSize.X
+        
+                    -- Calcula o novo valor com base na posição do mouse
+                    local newValue = MinValue + (MaxValue - MinValue) * ((mouseX - sliderX) / sliderWidth)
+                    CurrentValue = math.clamp(newValue, MinValue, MaxValue)  -- Garante que o valor esteja dentro dos limites
+                    updateValue()
+                end
+            end)
+        
+            updateValue()  -- Atualiza o valor inicial
+        
+            print("Slider criado: " .. TitleLabel.Text)  -- Mensagem para verificar a criação do Slider
+        
+            return SliderFrame  -- Retornar o Frame do Slider
+        end
+
         
         -- Função para adicionar Switch na Tab
         function UIlib:Switch(config)
