@@ -447,18 +447,19 @@ function UIlib:Janela()
                 UICornerOption.CornerRadius = UDim.new(0, 5)
                 UICornerOption.Parent = OptionButton
         
-                -- Evento de seleção de opção
-                OptionButton.MouseButton1Click:Connect(function()
-                    if selectedItems[option] then
-                        -- Remove a seleção se já estiver selecionado
-                        selectedItems[option] = nil
+                -- Atualiza o estado de seleção e a cor de fundo ao selecionar/desselecionar uma opção
+                option.MouseButton1Click:Connect(function()
+                    if selectedOptions[option.Text] then
+                        selectedOptions[option.Text] = nil  -- Remove a seleção
                     else
-                        -- Adiciona a seleção se não estiver selecionado
-                        if not config.MaxSelections or countSelectedItems() < config.MaxSelections then
-                            selectedItems[option] = true
+                        if config.MaxSelections and countSelectedOptions() >= config.MaxSelections then
+                            return  -- Limita o número de seleções se atingido o máximo
                         end
+                        selectedOptions[option.Text] = true  -- Adiciona a seleção
                     end
-                    updateButton()  -- Atualiza o botão com as seleções
+                    
+                    -- Atualiza a cor de fundo com base no estado de seleção
+                    option.BackgroundColor3 = selectedOptions[option.Text] and Color3.fromRGB(200, 200, 200) or Color3.fromRGB(255, 255, 255)
                 end)
             end
         
