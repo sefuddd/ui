@@ -347,88 +347,66 @@ function UIlib:Janela()
 
         -- Dropdown
         function UIlib:Dropdown(config)
-            -- Verifica se config.Parent existe para evitar erros
-            local parent = config.Parent or warn("config.Parent é nil, usando Tab como pai padrão.")
-            local parentChildrenCount = parent and #parent:GetChildren() or 0
+            -- Criação do novo dropdown
+            local newDropdown = {}
+            newDropdown.Button = Instance.new("TextButton")
+            newDropdown.Active = false
+            local sizeX, sizeY = 100, 50
+            newDropdown.Button.Size = UDim2.new(0, sizeX, 0, sizeY)
+            newDropdown.Button.Text = config.Options[1] -- Define o texto inicial como a primeira opção
+            newDropdown.Button.Parent = config.Parent
         
-            -- Frame principal do Dropdown
-            local DropdownFrame = Instance.new("Frame")
-            DropdownFrame.Size = UDim2.new(1, -10, 0, 40)
-            DropdownFrame.Position = UDim2.new(0, 5, 0, parentChildrenCount * 45)
-            DropdownFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            DropdownFrame.BorderSizePixel = 0
-            DropdownFrame.Parent = parent
+            newDropdown.Listeners = {}
         
-            -- Label para o item selecionado
-            local SelectedLabel = Instance.new("TextLabel")
-            SelectedLabel.Size = UDim2.new(1, -30, 1, 0)
-            SelectedLabel.Position = UDim2.new(0, 10, 0, 0)
-            SelectedLabel.Text = config.Text or "Selecione uma opção"
-            SelectedLabel.Font = Enum.Font.Roboto
-            SelectedLabel.TextSize = 14
-            SelectedLabel.TextColor3 = Color3.new(1, 1, 1)
-            SelectedLabel.BackgroundTransparency = 1
-            SelectedLabel.TextXAlignment = Enum.TextXAlignment.Left
-            SelectedLabel.Parent = DropdownFrame
+            -- Função para esconder ou mostrar a lista de opções
+            function newDropdown:HideList(bool)
+                if bool then
+                    newDropdown.Button.ClipsDescendants = true
+                else
+                    newDropdown.Button.ClipsDescendants = false
+                end
+                newDropdown.Active = not bool
+            end
         
-            -- Botão para expandir o dropdown
-            local DropdownButton = Instance.new("TextButton")
-            DropdownButton.Size = UDim2.new(0, 20, 1, 0)
-            DropdownButton.Position = UDim2.new(1, -25, 0, 0)
-            DropdownButton.Text = "v"
-            DropdownButton.Font = Enum.Font.Roboto
-            DropdownButton.TextSize = 14
-            DropdownButton.TextColor3 = Color3.new(1, 1, 1)
-            DropdownButton.BackgroundTransparency = 1
-            DropdownButton.Parent = DropdownFrame
+            newDropdown.Listeners.OnSelect = {}
+            function newDropdown.OnSelect(func)
+                -- Chamado quando um item na lista é selecionado
+                table.insert(newDropdown.Listeners.OnSelect, func)
+            end
         
-            -- Frame para as opções
-            local OptionsFrame = Instance.new("Frame")
-            OptionsFrame.Size = UDim2.new(1, 0, 0, 0)
-            OptionsFrame.Position = UDim2.new(0, 0, 1, 0)
-            OptionsFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            OptionsFrame.BorderSizePixel = 0
-            OptionsFrame.ClipsDescendants = true
-            OptionsFrame.Visible = false
-            OptionsFrame.Parent = DropdownFrame
-        
-            -- Toggle de visibilidade
-            DropdownButton.MouseButton1Click:Connect(function()
-                OptionsFrame.Visible = not OptionsFrame.Visible
-                OptionsFrame.Size = UDim2.new(1, 0, 0, #config.Options * 30)
-            end)
-        
-            -- Função para selecionar uma opção
-            local function SelectOption(option)
-                SelectedLabel.Text = option
-                OptionsFrame.Visible = false
-                if config.Callback then
-                    config.Callback(option)
+            local function fireOnSelect(value)
+                for _, func in pairs(newDropdown.Listeners.OnSelect) do
+                    func(value)
                 end
             end
         
-            -- Criar opções no dropdown
-            for i, option in ipairs(config.Options) do
-                local OptionButton = Instance.new("TextButton")
-                OptionButton.Size = UDim2.new(1, 0, 0, 30)
-                OptionButton.Position = UDim2.new(0, 0, 0, (i - 1) * 30)
-                OptionButton.Text = option
-                OptionButton.Font = Enum.Font.Roboto
-                OptionButton.TextSize = 14
-                OptionButton.TextColor3 = Color3.new(1, 1, 1)
-                OptionButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-                OptionButton.Parent = OptionsFrame
+            -- Função para alternar a exibição da lista
+            newDropdown.Button.MouseButton1Down:Connect(function()
+                if newDropdown.Active then
+                    newDropdown:HideList(true)
+                else
+                    newDropdown:HideList(false)
+                end
+            end)
         
-                OptionButton.MouseButton1Click:Connect(function()
-                    SelectOption(option)
+            -- Criando os itens da lista
+            for i = 1, #config.Options do
+                local item = Instance.new("TextButton")
+                item.Size = UDim2.new(1, 0, 0, sizeY)
+                item.Position = UDim2.new(0, 0, 0, sizeY * i)
+                item.Text = config.Options[i]
+                item.Parent = newDropdown.Button
+        
+                item.MouseButton1Down:Connect(function()
+                    newDropdown.Button.Text = config.Options[i]
+                    fireOnSelect(config.Options[i])
+                    newDropdown:HideList(true)
                 end)
             end
         
-            return DropdownFrame
+            newDropdown:HideList(true)
+            return newDropdown
         end
-
-
-
 
 
         
