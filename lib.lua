@@ -420,12 +420,6 @@ function UIlib:Janela()
                     end
         
                     SelectedLabel.Text = #selectedText > 0 and table.concat(selectedText, ", ") or "Selecione opções"
-                    
-                    -- Esconde a lista
-                    OptionsList.Visible = false
-                    if config.Callback then
-                        config.Callback(selectedText)  -- Chama o callback com as opções selecionadas
-                    end
                 end)
             end
         
@@ -441,12 +435,35 @@ function UIlib:Janela()
                 end
             end)
         
+            -- Função para fechar o dropdown ao clicar fora dele
+            local function closeDropdown()
+                if OptionsList.Visible then
+                    OptionsList.Visible = false
+                    OptionsList.Size = UDim2.new(1, 0, 0, 0)  -- Reseta para tamanho escondido
+                end
+            end
+        
+            -- Conecta a função de fechar o dropdown ao clicar fora
+            local function onClickOutside()
+                closeDropdown()
+            end
+        
+            -- Conecte a função de fechar o dropdown ao evento de clique no TabContent
+            TabContent.MouseButton1Down:Connect(onClickOutside)
+        
+            -- Retorna as opções selecionadas ao fechar
+            DropdownFrame:GetPropertyChangedSignal("Visible"):Connect(function()
+                if not DropdownFrame.Visible then
+                    local selectedText = {}
+                    for k in pairs(selectedOptions) do
+                        table.insert(selectedText, k)
+                    end
+                    return selectedText  -- Retorna as opções selecionadas
+                end
+            end)
+        
             return DropdownFrame  -- Retorna o frame do dropdown
         end
-
-
-
-
 
         
         -- Função para adicionar Switch na Tab
