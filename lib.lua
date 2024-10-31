@@ -347,7 +347,7 @@ function UIlib:Janela()
 
         -- Dropdown
 
-        function Tab:CreateDropdown(DropdownSettings)
+        function UIlib:CreateDropdown(DropdownSettings)
             local Dropdown = Elements.Template.Dropdown:Clone()
             
             -- Definindo Nome e Propriedades Básicas
