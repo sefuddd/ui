@@ -430,24 +430,24 @@ function UIlib:Janela()
                 end
             end
         
-            -- Adiciona as opções ao dropdown
-            for index, option in ipairs(config.Options) do
-                local OptionButton = Instance.new("TextButton")
-                OptionButton.Size = UDim2.new(1, 0, 0, 30)  -- Tamanho do botão de opção
-                OptionButton.Position = UDim2.new(0, 0, 0, (index - 1) * 30)  -- Define a posição correta para cada opção
-                OptionButton.Text = option  -- Texto da opção
-                OptionButton.Font = Enum.Font.Roboto
-                OptionButton.TextSize = 14
-                OptionButton.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
-                OptionButton.BackgroundColor3 = Color3.fromRGB(240, 240, 240)  -- Cor do fundo
-                OptionButton.Parent = DropdownContent
-        
-                -- Canto arredondado para os botões de opção
-                local UICornerOption = Instance.new("UICorner")
-                UICornerOption.CornerRadius = UDim.new(0, 5)
-                UICornerOption.Parent = OptionButton
-        
-                -- Atualiza o estado de seleção e a cor de fundo ao selecionar/desselecionar uma opção
+            -- Controle para mostrar/ocultar o conteúdo do dropdown ao clicar no botão
+            dropdownButton.MouseButton1Click:Connect(function()
+                dropdownContent.Visible = not dropdownContent.Visible
+            end)
+            
+            -- Loop para criar as opções e configurar a seleção
+            for i, item in ipairs(config.Options) do
+                local option = Instance.new("TextButton")
+                option.Size = UDim2.new(1, -10, 0, 30)
+                option.Position = UDim2.new(0, 5, 0, i * 35)
+                option.Text = item
+                option.Font = Enum.Font.Roboto
+                option.TextSize = 14
+                option.TextColor3 = Color3.new(0, 0, 0)
+                option.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- Branco inicial
+                option.Parent = dropdownContent
+            
+                -- Função para selecionar/desselecionar e atualizar a cor de fundo
                 option.MouseButton1Click:Connect(function()
                     if selectedOptions[option.Text] then
                         selectedOptions[option.Text] = nil  -- Remove a seleção
@@ -457,7 +457,7 @@ function UIlib:Janela()
                         end
                         selectedOptions[option.Text] = true  -- Adiciona a seleção
                     end
-                    
+            
                     -- Atualiza a cor de fundo com base no estado de seleção
                     option.BackgroundColor3 = selectedOptions[option.Text] and Color3.fromRGB(200, 200, 200) or Color3.fromRGB(255, 255, 255)
                 end)
