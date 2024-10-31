@@ -355,7 +355,7 @@ function UIlib:Janela()
             newDropdown.Button.Size = UDim2.new(0, sizeX, 0, sizeY)
             newDropdown.Button.Text = config.Options[1] -- Define o texto inicial como a primeira opção
             newDropdown.Button.Position = UDim2.new(0, 5, 0, #config.Parent:GetChildren() * 45)  -- Posição vertical
-            newDropdown.Button.Parent = config.Parent
+            newDropdown.Button.Parent = TabContent
         
             newDropdown.Listeners = {}
         
