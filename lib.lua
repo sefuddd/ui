@@ -347,78 +347,15 @@ function UIlib:Janela()
 
         -- Dropdown
 
-        function UIlib:CreateDropdown(DropdownSettings)
-            local Dropdown = Elements.Template.Dropdown:Clone()
-            
-            -- Definindo Nome e Propriedades Básicas
-            Dropdown.Name = DropdownSettings.Name or "Dropdown"
-            Dropdown.Title.Text = DropdownSettings.Name
-            Dropdown.Selected.Text = DropdownSettings.CurrentOption
-            Dropdown.Parent = TabPage
-            Dropdown.Visible = true
-        
-            -- Configuração inicial de visibilidade e transparência
-            Dropdown.List.Visible = false
-            Dropdown.BackgroundTransparency = 1
-            Dropdown.UIStroke.Transparency = 1
-            Dropdown.Title.TextTransparency = 1
-        
-            -- Animações iniciais
-            TweenService:Create(Dropdown, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
-            TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
-            TweenService:Create(Dropdown.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
-        
-            -- Configuração do Toggle e Dropdown Interação
-            local isOpen = false
-            Dropdown.Toggle.Rotation = 180
-            Dropdown.Interact.MouseButton1Click:Connect(function()
-                if isOpen then
-                    -- Fechar dropdown
-                    TweenService:Create(Dropdown, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0, 45)}):Play()
-                    TweenService:Create(Dropdown.Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Rotation = 180}):Play()
-                    TweenService:Create(Dropdown.List, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ScrollBarImageTransparency = 1}):Play()
-                    Dropdown.List.Visible = false
-                else
-                    -- Abrir dropdown
-                    TweenService:Create(Dropdown, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0, 180)}):Play()
-                    TweenService:Create(Dropdown.Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Rotation = 0}):Play()
-                    Dropdown.List.Visible = true
-                    TweenService:Create(Dropdown.List, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ScrollBarImageTransparency = 0.7}):Play()
+        local function CriarDropdown(titulo, opcoes, callback)
+            local dropdown = UIlib:CreateDropdown({
+                Title = titulo,
+                Options = opcoes,
+                Callback = function(selecionado)
+                    callback(selecionado)
                 end
-                isOpen = not isOpen
-            end)
-        
-            -- Adicionando Opções ao Dropdown
-            for _, Option in ipairs(DropdownSettings.Options) do
-                local DropdownOption = Elements.Template.Dropdown.List.Template:Clone()
-                DropdownOption.Name = Option
-                DropdownOption.Title.Text = Option
-                DropdownOption.Parent = Dropdown.List
-                DropdownOption.Visible = true
-        
-                DropdownOption.Interact.MouseButton1Click:Connect(function()
-                    Dropdown.Selected.Text = Option
-                    DropdownSettings.CurrentOption = Option
-                    DropdownSettings.Callback(Option)
-                    -- Fechar dropdown após seleção
-                    isOpen = false
-                    Dropdown.List.Visible = false
-                    TweenService:Create(Dropdown, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0, 45)}):Play()
-                    TweenService:Create(Dropdown.Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Rotation = 180}):Play()
-                    TweenService:Create(Dropdown.List, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ScrollBarImageTransparency = 1}):Play()
-                end)
-            end
-        
-            -- Efeitos de Hover no Dropdown
-            Dropdown.MouseEnter:Connect(function()
-                TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
-            end)
-        
-            Dropdown.MouseLeave:Connect(function()
-                TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}):Play()
-            end)
-        
-            return DropdownSettings
+            })
+            return dropdown
         end
 
 
