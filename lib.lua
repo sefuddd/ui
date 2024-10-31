@@ -346,71 +346,78 @@ function UIlib:Janela()
 
 
         -- Dropdown
+        -- Função para adicionar um Dropdown na Tab
         function UIlib:Dropdown(config)
+            local DropdownFrame = Instance.new("Frame")
+            DropdownFrame.Size = UDim2.new(1, -10, 0, 40)  -- Tamanho do Dropdown
+            DropdownFrame.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posição vertical
+            DropdownFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Cor de fundo
+            DropdownFrame.Parent = TabContent
         
-            -- Criação do novo dropdown
-            local newDropdown = {}
-            newDropdown.Button = Instance.new("TextButton")
-            newDropdown.Active = false
-            local sizeX, sizeY = 100, 50
-            newDropdown.Button.Size = UDim2.new(0, sizeX, 0, sizeY)
-            newDropdown.Button.Text = config.Options[1] -- Define o texto inicial como a primeira opção
+            local SelectedLabel = Instance.new("TextLabel")
+            SelectedLabel.Size = UDim2.new(1, -40, 1, 0)  -- Tamanho do label de seleção
+            SelectedLabel.Text = config.Options[1] or "Selecione uma opção"
+            SelectedLabel.Font = Enum.Font.Roboto
+            SelectedLabel.TextSize = 14
+            SelectedLabel.TextColor3 = Color3.new(1, 1, 1)
+            SelectedLabel.BackgroundTransparency = 1
+            SelectedLabel.Parent = DropdownFrame
         
-            -- Posição vertical com base nos filhos atuais do Parent
-            newDropdown.Button.Position = UDim2.new(0, 5, 0, #config.Parent:GetChildren() * 45)  
-            newDropdown.Button.Parent = TabContent
+            local DropdownButton = Instance.new("TextButton")
+            DropdownButton.Size = UDim2.new(0, 30, 1, 0)  -- Tamanho do botão de dropdown
+            DropdownButton.Position = UDim2.new(1, -5, 0, 0)  -- Posiciona ao lado do label
+            DropdownButton.Text = "▼"
+            DropdownButton.Font = Enum.Font.Roboto
+            DropdownButton.TextSize = 14
+            DropdownButton.TextColor3 = Color3.new(1, 1, 1)
+            DropdownButton.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+            DropdownButton.Parent = DropdownFrame
         
-            newDropdown.Listeners = {}
+            -- Lista de opções
+            local OptionsList = Instance.new("Frame")
+            OptionsList.Size = UDim2.new(1, 0, 0, 0)  -- Tamanho inicial (0 para escondido)
+            OptionsList.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            OptionsList.Position = UDim2.new(0, 0, 1, 0)  -- Abaixo do DropdownFrame
+            OptionsList.Visible = false  -- Esconder inicialmente
+            OptionsList.Parent = DropdownFrame
         
-            -- Função para esconder ou mostrar a lista de opções
-            function newDropdown:HideList(bool)
-                if bool then
-                    newDropdown.Button.ClipsDescendants = true
-                else
-                    newDropdown.Button.ClipsDescendants = false
-                end
-                newDropdown.Active = not bool
-            end
+            -- Criar as opções
+            for _, option in ipairs(config.Options) do
+                local OptionButton = Instance.new("TextButton")
+                OptionButton.Size = UDim2.new(1, 0, 0, 30)
+                OptionButton.Text = option
+                OptionButton.Font = Enum.Font.Roboto
+                OptionButton.TextSize = 14
+                OptionButton.TextColor3 = Color3.new(1, 1, 1)
+                OptionButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+                OptionButton.Parent = OptionsList
         
-            newDropdown.Listeners.OnSelect = {}
-            function newDropdown.OnSelect(func)
-                -- Chamado quando um item na lista é selecionado
-                table.insert(newDropdown.Listeners.OnSelect, func)
-            end
-        
-            local function fireOnSelect(value)
-                for _, func in pairs(newDropdown.Listeners.OnSelect) do
-                    func(value)
-                end
-            end
-        
-            -- Função para alternar a exibição da lista
-            newDropdown.Button.MouseButton1Down:Connect(function()
-                if newDropdown.Active then
-                    newDropdown:HideList(true)
-                else
-                    newDropdown:HideList(false)
-                end
-            end)
-        
-            -- Criando os itens da lista
-            for i = 1, #config.Options do
-                local item = Instance.new("TextButton")
-                item.Size = UDim2.new(1, 0, 0, sizeY)
-                item.Position = UDim2.new(0, 0, 0, sizeY * i)
-                item.Text = config.Options[i]
-                item.Parent = newDropdown.Button
-        
-                item.MouseButton1Down:Connect(function()
-                    newDropdown.Button.Text = config.Options[i]
-                    fireOnSelect(config.Options[i])
-                    newDropdown:HideList(true)
+                OptionButton.MouseButton1Click:Connect(function()
+                    SelectedLabel.Text = option  -- Atualiza o texto do label
+                    OptionsList.Visible = false  -- Esconde a lista
+                    if config.Callback then
+                        config.Callback(option)  -- Chama o callback se definido
+                    end
                 end)
             end
         
-            newDropdown:HideList(true)
-            return newDropdown
+            -- Exibir/ocultar a lista de opções ao clicar no botão
+            DropdownButton.MouseButton1Click:Connect(function()
+                OptionsList.Visible = not OptionsList.Visible
+            end)
+        
+            -- Fechar a lista ao clicar fora
+            OptionsList:GetPropertyChangedSignal("Visible"):Connect(function()
+                if OptionsList.Visible == false then
+                    DropdownFrame.Size = UDim2.new(1, -10, 0, 40)  -- Tamanho normal
+                else
+                    DropdownFrame.Size = UDim2.new(1, -10, 0, 40 + #config.Options * 30)  -- Aumenta o tamanho conforme necessário
+                end
+            end)
+        
+            return DropdownFrame  -- Retorna o frame do dropdown
         end
+
 
         
         -- Função para adicionar Switch na Tab
