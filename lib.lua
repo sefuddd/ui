@@ -348,12 +348,8 @@ function UIlib:Janela()
         -- Dropdown
         function UIlib:Dropdown(config)
             -- Verifica se config.Parent existe para evitar erros
-            local parentChildrenCount = 0
-            if config.Parent then
-                parentChildrenCount = #config.Parent:GetChildren()
-            else
-                warn("config.Parent é nil, verifique a origem do objeto.")
-            end
+            local parent = config.Parent or warn("config.Parent é nil, usando Tab como pai padrão.")
+            local parentChildrenCount = parent and #parent:GetChildren() or 0
         
             -- Frame principal do Dropdown
             local DropdownFrame = Instance.new("Frame")
@@ -361,7 +357,7 @@ function UIlib:Janela()
             DropdownFrame.Position = UDim2.new(0, 5, 0, parentChildrenCount * 45)
             DropdownFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
             DropdownFrame.BorderSizePixel = 0
-            DropdownFrame.Parent = config.Parent
+            DropdownFrame.Parent = parent
         
             -- Label para o item selecionado
             local SelectedLabel = Instance.new("TextLabel")
