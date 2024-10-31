@@ -382,7 +382,7 @@ function UIlib:Janela()
             OptionsList.Parent = DropdownFrame
         
             -- Criar as opções
-            for _, option in ipairs(config.Options) do
+            for index, option in ipairs(config.Options) do
                 local OptionButton = Instance.new("TextButton")
                 OptionButton.Size = UDim2.new(1, 0, 0, 30)  -- Tamanho de cada opção
                 OptionButton.Text = option
@@ -390,6 +390,7 @@ function UIlib:Janela()
                 OptionButton.TextSize = 14
                 OptionButton.TextColor3 = Color3.new(1, 1, 1)
                 OptionButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+                OptionButton.Position = UDim2.new(0, 0, 0, (index - 1) * 30)  -- Ajusta a posição vertical da opção
                 OptionButton.Parent = OptionsList
         
                 OptionButton.MouseButton1Click:Connect(function()
@@ -424,6 +425,7 @@ function UIlib:Janela()
         
             return DropdownFrame  -- Retorna o frame do dropdown
         end
+
 
 
         
