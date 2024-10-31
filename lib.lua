@@ -346,17 +346,83 @@ function UIlib:Janela()
 
 
         -- Dropdown
-
-        local function CriarDropdown(titulo, opcoes, callback)
-            local dropdown = UIlib:CreateDropdown({
-                Title = titulo,
-                Options = opcoes,
-                Callback = function(selecionado)
-                    callback(selecionado)
+        function UIlib:Dropdown(config)
+            -- Frame principal do Dropdown
+            local DropdownFrame = Instance.new("Frame")
+            DropdownFrame.Size = UDim2.new(1, -10, 0, 40)
+            DropdownFrame.Position = UDim2.new(0, 5, 0, #config.Parent:GetChildren() * 45)
+            DropdownFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            DropdownFrame.BorderSizePixel = 0
+            DropdownFrame.Parent = config.Parent
+        
+            -- Label para o item selecionado
+            local SelectedLabel = Instance.new("TextLabel")
+            SelectedLabel.Size = UDim2.new(1, -30, 1, 0)
+            SelectedLabel.Position = UDim2.new(0, 10, 0, 0)
+            SelectedLabel.Text = config.Text or "Selecione uma opção"
+            SelectedLabel.Font = Enum.Font.Roboto
+            SelectedLabel.TextSize = 14
+            SelectedLabel.TextColor3 = Color3.new(1, 1, 1)
+            SelectedLabel.BackgroundTransparency = 1
+            SelectedLabel.TextXAlignment = Enum.TextXAlignment.Left
+            SelectedLabel.Parent = DropdownFrame
+        
+            -- Botão para expandir o dropdown
+            local DropdownButton = Instance.new("TextButton")
+            DropdownButton.Size = UDim2.new(0, 20, 1, 0)
+            DropdownButton.Position = UDim2.new(1, -25, 0, 0)
+            DropdownButton.Text = "v"
+            DropdownButton.Font = Enum.Font.Roboto
+            DropdownButton.TextSize = 14
+            DropdownButton.TextColor3 = Color3.new(1, 1, 1)
+            DropdownButton.BackgroundTransparency = 1
+            DropdownButton.Parent = DropdownFrame
+        
+            -- Frame para as opções
+            local OptionsFrame = Instance.new("Frame")
+            OptionsFrame.Size = UDim2.new(1, 0, 0, 0)
+            OptionsFrame.Position = UDim2.new(0, 0, 1, 0)
+            OptionsFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            OptionsFrame.BorderSizePixel = 0
+            OptionsFrame.ClipsDescendants = true
+            OptionsFrame.Visible = false
+            OptionsFrame.Parent = DropdownFrame
+        
+            -- Toggle de visibilidade
+            DropdownButton.MouseButton1Click:Connect(function()
+                OptionsFrame.Visible = not OptionsFrame.Visible
+                OptionsFrame.Size = UDim2.new(1, 0, 0, #config.Options * 30)
+            end)
+        
+            -- Função para selecionar uma opção
+            local function SelectOption(option)
+                SelectedLabel.Text = option
+                OptionsFrame.Visible = false
+                if config.Callback then
+                    config.Callback(option)
                 end
-            })
-            return dropdown
+            end
+        
+            -- Criar opções no dropdown
+            for i, option in ipairs(config.Options) do
+                local OptionButton = Instance.new("TextButton")
+                OptionButton.Size = UDim2.new(1, 0, 0, 30)
+                OptionButton.Position = UDim2.new(0, 0, 0, (i - 1) * 30)
+                OptionButton.Text = option
+                OptionButton.Font = Enum.Font.Roboto
+                OptionButton.TextSize = 14
+                OptionButton.TextColor3 = Color3.new(1, 1, 1)
+                OptionButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                OptionButton.Parent = OptionsFrame
+        
+                OptionButton.MouseButton1Click:Connect(function()
+                    SelectOption(option)
+                end)
+            end
+        
+            return DropdownFrame
         end
+
 
 
 
