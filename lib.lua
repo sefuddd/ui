@@ -381,6 +381,7 @@ function UIlib:Janela()
             OptionsList.Parent = DropdownFrame
         
             local selectedOptions = {}  -- Armazena as opções selecionadas
+            local selectedOptionsVariable = {}  -- Variável externa para armazenar as opções selecionadas
         
             -- Criar as opções
             for index, option in ipairs(config.Options) do
@@ -401,11 +402,13 @@ function UIlib:Janela()
                     if isSelected then
                         -- Desmarca a opção se já estiver selecionada
                         selectedOptions[option] = nil
+                        selectedOptionsVariable[option] = nil  -- Remove da variável externa
                         OptionButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)  -- Cor padrão
                     else
                         -- Se não estiver selecionada, verifica o limite
                         if #selectedOptions < (config.MaxSelections or #config.Options) then
                             selectedOptions[option] = true
+                            selectedOptionsVariable[option] = true  -- Adiciona à variável externa
                             OptionButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)  -- Cor para selecionada
                         else
                             -- Exibe uma mensagem de aviso ou feedback ao usuário
@@ -451,19 +454,10 @@ function UIlib:Janela()
             -- Conecte a função de fechar o dropdown ao evento de clique no TabContent
             TabContent.MouseButton1Down:Connect(onClickOutside)
         
-            -- Retorna as opções selecionadas ao fechar
-            DropdownFrame:GetPropertyChangedSignal("Visible"):Connect(function()
-                if not DropdownFrame.Visible then
-                    local selectedText = {}
-                    for k in pairs(selectedOptions) do
-                        table.insert(selectedText, k)
-                    end
-                    return selectedText  -- Retorna as opções selecionadas
-                end
-            end)
-        
-            return DropdownFrame  -- Retorna o frame do dropdown
+            -- Retorna a variável com as opções selecionadas
+            return selectedOptionsVariable  -- Retorna a variável que contém as opções selecionadas
         end
+
 
         
         -- Função para adicionar Switch na Tab
