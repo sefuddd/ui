@@ -347,133 +347,78 @@ function UIlib:Janela()
 
         -- Dropdown
 
-        local UserInputService = game:GetService("UserInputService")
-
-        function UIlib:Dropdown(config)
-            local DropdownFrame = Instance.new("Frame")
-            DropdownFrame.Size = UDim2.new(1, -10, 0, 60)  -- Aumentar altura para acomodar título e botão
-            DropdownFrame.Position = UDim2.new(0, 5, 0, #TabContent:GetChildren() * 45)  -- Posição vertical
-            DropdownFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
-            DropdownFrame.BackgroundTransparency = 0  -- Opaco
-            DropdownFrame.Parent = TabContent
+        function Tab:CreateDropdown(DropdownSettings)
+            local Dropdown = Elements.Template.Dropdown:Clone()
+            
+            -- Definindo Nome e Propriedades Básicas
+            Dropdown.Name = DropdownSettings.Name or "Dropdown"
+            Dropdown.Title.Text = DropdownSettings.Name
+            Dropdown.Selected.Text = DropdownSettings.CurrentOption
+            Dropdown.Parent = TabPage
+            Dropdown.Visible = true
         
-            -- Canto arredondado
-            local UICorner = Instance.new("UICorner")
-            UICorner.CornerRadius = UDim.new(0, 10)  -- Arredondar os cantos
-            UICorner.Parent = DropdownFrame
+            -- Configuração inicial de visibilidade e transparência
+            Dropdown.List.Visible = false
+            Dropdown.BackgroundTransparency = 1
+            Dropdown.UIStroke.Transparency = 1
+            Dropdown.Title.TextTransparency = 1
         
-            -- Texto do Dropdown
-            local TitleLabel = Instance.new("TextLabel")
-            TitleLabel.Size = UDim2.new(1, 0, 0, 20)  -- Tamanho do texto
-            TitleLabel.Position = UDim2.new(0, 0, 0, 0)  -- Posição
-            TitleLabel.Text = config.Title or "Dropdown"  -- Título do dropdown
-            TitleLabel.Font = Enum.Font.Roboto
-            TitleLabel.TextSize = 14
-            TitleLabel.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
-            TitleLabel.BackgroundTransparency = 1  -- Transparente
-            TitleLabel.Parent = DropdownFrame
+            -- Animações iniciais
+            TweenService:Create(Dropdown, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
+            TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+            TweenService:Create(Dropdown.Title, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
         
-            -- Dropdown Button
-            local DropdownButton = Instance.new("TextButton")
-            DropdownButton.Size = UDim2.new(1, 0, 0, 30)  -- Tamanho do botão
-            DropdownButton.Position = UDim2.new(0, 0, 0.3, 0)  -- Posiciona abaixo do título
-            DropdownButton.Text = "Selecione uma opção"  -- Texto do botão
-            DropdownButton.Font = Enum.Font.Roboto
-            DropdownButton.TextSize = 14
-            DropdownButton.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
-            DropdownButton.BackgroundColor3 = Color3.fromRGB(220, 220, 220)  -- Cor do fundo
-            DropdownButton.Parent = DropdownFrame
-        
-            -- Dropdown Content (Lista de opções)
-            local DropdownContent = Instance.new("Frame")
-            DropdownContent.Size = UDim2.new(1, 0, 0, math.min(#config.Options, 5) * 30)  -- Altura para acomodar as opções (máximo de 5 visíveis)
-            DropdownContent.Position = UDim2.new(0, 0, 1, 0)  -- Abaixo do botão
-            DropdownContent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- Fundo branco
-            DropdownContent.Visible = false  -- Ocultar inicialmente
-            DropdownContent.Parent = DropdownFrame
-        
-            -- Canto arredondado para o conteúdo do dropdown
-            local UICornerContent = Instance.new("UICorner")
-            UICornerContent.CornerRadius = UDim.new(0, 10)
-            UICornerContent.Parent = DropdownContent
-        
-            -- Variável para armazenar as seleções
-            local selectedItems = {}  -- Inicialização correta da tabela
-        
-            -- Função para contar os itens selecionados
-            local function countSelectedItems()
-                local count = 0
-                for _, isSelected in pairs(selectedItems) do
-                    if isSelected then
-                        count = count + 1
-                    end
-                end
-                return count
-            end
-        
-            -- Função para atualizar o botão com os itens selecionados
-            local function updateButton()
-                local selectedNames = {}
-        
-                -- Verifica os itens selecionados
-                for item in pairs(selectedItems) do
-                    if selectedItems[item] then
-                        table.insert(selectedNames, item)
-                    end
-                end
-        
-                -- Atualiza o texto do botão
-                if #selectedNames > 0 then
-                    DropdownButton.Text = "Selecionado: " .. table.concat(selectedNames, ", ")
+            -- Configuração do Toggle e Dropdown Interação
+            local isOpen = false
+            Dropdown.Toggle.Rotation = 180
+            Dropdown.Interact.MouseButton1Click:Connect(function()
+                if isOpen then
+                    -- Fechar dropdown
+                    TweenService:Create(Dropdown, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0, 45)}):Play()
+                    TweenService:Create(Dropdown.Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Rotation = 180}):Play()
+                    TweenService:Create(Dropdown.List, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ScrollBarImageTransparency = 1}):Play()
+                    Dropdown.List.Visible = false
                 else
-                    DropdownButton.Text = "Selecione uma opção"
+                    -- Abrir dropdown
+                    TweenService:Create(Dropdown, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0, 180)}):Play()
+                    TweenService:Create(Dropdown.Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Rotation = 0}):Play()
+                    Dropdown.List.Visible = true
+                    TweenService:Create(Dropdown.List, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ScrollBarImageTransparency = 0.7}):Play()
                 end
-            end
-        
-            -- Controle para mostrar/ocultar o conteúdo do dropdown ao clicar no botão
-            dropdownButton.MouseButton1Click:Connect(function()
-                dropdownContent.Visible = not dropdownContent.Visible
+                isOpen = not isOpen
             end)
-            
-            -- Loop para criar as opções e configurar a seleção
-            for i, item in ipairs(config.Options) do
-                local option = Instance.new("TextButton")
-                option.Size = UDim2.new(1, -10, 0, 30)
-                option.Position = UDim2.new(0, 5, 0, i * 35)
-                option.Text = item
-                option.Font = Enum.Font.Roboto
-                option.TextSize = 14
-                option.TextColor3 = Color3.new(0, 0, 0)
-                option.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- Branco inicial
-                option.Parent = dropdownContent
-            
-                -- Função para selecionar/desselecionar e atualizar a cor de fundo
-                option.MouseButton1Click:Connect(function()
-                    if selectedOptions[option.Text] then
-                        selectedOptions[option.Text] = nil  -- Remove a seleção
-                    else
-                        if config.MaxSelections and countSelectedOptions() >= config.MaxSelections then
-                            return  -- Limita o número de seleções se atingido o máximo
-                        end
-                        selectedOptions[option.Text] = true  -- Adiciona a seleção
-                    end
-            
-                    -- Atualiza a cor de fundo com base no estado de seleção
-                    option.BackgroundColor3 = selectedOptions[option.Text] and Color3.fromRGB(200, 200, 200) or Color3.fromRGB(255, 255, 255)
+        
+            -- Adicionando Opções ao Dropdown
+            for _, Option in ipairs(DropdownSettings.Options) do
+                local DropdownOption = Elements.Template.Dropdown.List.Template:Clone()
+                DropdownOption.Name = Option
+                DropdownOption.Title.Text = Option
+                DropdownOption.Parent = Dropdown.List
+                DropdownOption.Visible = true
+        
+                DropdownOption.Interact.MouseButton1Click:Connect(function()
+                    Dropdown.Selected.Text = Option
+                    DropdownSettings.CurrentOption = Option
+                    DropdownSettings.Callback(Option)
+                    -- Fechar dropdown após seleção
+                    isOpen = false
+                    Dropdown.List.Visible = false
+                    TweenService:Create(Dropdown, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(1, -10, 0, 45)}):Play()
+                    TweenService:Create(Dropdown.Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {Rotation = 180}):Play()
+                    TweenService:Create(Dropdown.List, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {ScrollBarImageTransparency = 1}):Play()
                 end)
             end
         
-            -- Abrir e fechar o dropdown
-            DropdownButton.MouseButton1Click:Connect(function()
-                DropdownContent.Visible = not DropdownContent.Visible
+            -- Efeitos de Hover no Dropdown
+            Dropdown.MouseEnter:Connect(function()
+                TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
             end)
         
-            -- Atualiza o botão ao inicializar
-            updateButton()
+            Dropdown.MouseLeave:Connect(function()
+                TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}):Play()
+            end)
         
-            print("Dropdown criado: " .. TitleLabel.Text)  -- Mensagem para verificar a criação do Dropdown
-        
-            return selectedItems  -- Retorna a tabela de itens selecionados
+            return DropdownSettings
         end
 
 
