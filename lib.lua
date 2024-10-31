@@ -355,7 +355,7 @@ function UIlib:Janela()
         
             local SelectedLabel = Instance.new("TextLabel")
             SelectedLabel.Size = UDim2.new(1, -40, 1, 0)  -- Tamanho do label de seleção
-            SelectedLabel.Text = "Selecione opções"
+            SelectedLabel.Text = "Selecione uma opção"
             SelectedLabel.Font = Enum.Font.Roboto
             SelectedLabel.TextSize = 14
             SelectedLabel.TextColor3 = Color3.new(1, 1, 1)
@@ -380,82 +380,60 @@ function UIlib:Janela()
             OptionsList.Visible = false  -- Esconder inicialmente
             OptionsList.Parent = DropdownFrame
         
-            local selectedOptions = {}  -- Armazena as opções selecionadas
-            local selectedOptionsVariable = {}  -- Variável externa para armazenar as opções selecionadas
+            -- Armazenar opções selecionadas
+            local selectedOptions = {}
         
             -- Criar as opções
-            for index, option in ipairs(config.Options) do
+            for _, option in ipairs(config.Options) do
                 local OptionButton = Instance.new("TextButton")
-                OptionButton.Size = UDim2.new(1, 0, 0, 30)  -- Tamanho de cada opção
+                OptionButton.Size = UDim2.new(1, 0, 0, 30)
                 OptionButton.Text = option
                 OptionButton.Font = Enum.Font.Roboto
                 OptionButton.TextSize = 14
                 OptionButton.TextColor3 = Color3.new(1, 1, 1)
                 OptionButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-                OptionButton.Position = UDim2.new(0, 0, 0, (index - 1) * 30)  -- Ajusta a posição vertical da opção
                 OptionButton.Parent = OptionsList
         
                 OptionButton.MouseButton1Click:Connect(function()
                     -- Verifica se a opção já está selecionada
-                    local isSelected = selectedOptions[option]
-        
-                    if isSelected then
-                        -- Desmarca a opção se já estiver selecionada
+                    if selectedOptions[option] then
+                        -- Se já está selecionada, remove
                         selectedOptions[option] = nil
-                        selectedOptionsVariable[option] = nil  -- Remove da variável externa
-                        OptionButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)  -- Cor padrão
+                        OptionButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70) -- Cor padrão
                     else
-                        -- Se não estiver selecionada, verifica o limite
-                        if #selectedOptions < (config.MaxSelections or #config.Options) then
+                        -- Se não está selecionada, verifica se pode adicionar
+                        if #selectedOptions < (config.MaxSelections or 1) then
                             selectedOptions[option] = true
-                            selectedOptionsVariable[option] = true  -- Adiciona à variável externa
-                            OptionButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)  -- Cor para selecionada
+                            OptionButton.BackgroundColor3 = Color3.fromRGB(100, 255, 100)  -- Cor para selecionado
                         else
-                            -- Exibe uma mensagem de aviso ou feedback ao usuário
-                            print("Máximo de seleções atingido!")  -- Aqui pode-se usar um sistema de notificações
+                            -- Se o limite foi atingido, não adiciona
+                            print("Limite de seleções atingido")
                         end
                     end
         
-                    -- Atualiza o texto do label com as opções selecionadas
-                    local selectedText = {}
-                    for k in pairs(selectedOptions) do
-                        table.insert(selectedText, k)
-                    end
-        
-                    SelectedLabel.Text = #selectedText > 0 and table.concat(selectedText, ", ") or "Selecione opções"
+                    -- Atualiza o label com as opções selecionadas
+                    SelectedLabel.Text = "Selecionadas: " .. table.concat(table.keys(selectedOptions), ", ")
                 end)
             end
         
             -- Exibir/ocultar a lista de opções ao clicar no botão
             DropdownButton.MouseButton1Click:Connect(function()
                 OptionsList.Visible = not OptionsList.Visible
-        
-                -- Atualiza o tamanho do dropdown com base na visibilidade da lista
-                if OptionsList.Visible then
-                    OptionsList.Size = UDim2.new(1, 0, 0, #config.Options * 30)  -- Aumenta o tamanho conforme necessário
-                else
-                    OptionsList.Size = UDim2.new(1, 0, 0, 0)  -- Reseta para tamanho escondido
-                end
             end)
         
-            -- Função para fechar o dropdown ao clicar fora dele
+            -- Fechar a lista ao clicar fora ou no botão
             local function closeDropdown()
-                if OptionsList.Visible then
-                    OptionsList.Visible = false
-                    OptionsList.Size = UDim2.new(1, 0, 0, 0)  -- Reseta para tamanho escondido
+                OptionsList.Visible = false
+            end
+        
+            -- Conectar ao evento de clique fora do dropdown
+            DropdownFrame.MouseLeave:Connect(closeDropdown)
+        
+            return {
+                GetSelectedOptions = function()
+                    return selectedOptions
                 end
-            end
-        
-            -- Conecta a função de fechar o dropdown ao clicar fora
-            local function onClickOutside()
-                closeDropdown()
-            end
-        
-            -- Conecte a função de fechar o dropdown ao evento de clique no TabContent
-            TabContent.MouseButton1Down:Connect(onClickOutside)
-        
-            -- Retorna a variável com as opções selecionadas
-            return selectedOptionsVariable  -- Retorna a variável que contém as opções selecionadas
+            }
         end
 
 
