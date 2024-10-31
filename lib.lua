@@ -347,6 +347,11 @@ function UIlib:Janela()
 
         -- Dropdown
         function UIlib:Dropdown(config)
+            -- Verifica se o Parent foi fornecido e se é válido
+            if not config.Parent then
+                error("O parâmetro 'Parent' deve ser fornecido e não pode ser nil.")
+            end
+        
             -- Criação do novo dropdown
             local newDropdown = {}
             newDropdown.Button = Instance.new("TextButton")
@@ -354,7 +359,9 @@ function UIlib:Janela()
             local sizeX, sizeY = 100, 50
             newDropdown.Button.Size = UDim2.new(0, sizeX, 0, sizeY)
             newDropdown.Button.Text = config.Options[1] -- Define o texto inicial como a primeira opção
-            newDropdown.Button.Position = UDim2.new(0, 5, 0, #config.Parent:GetChildren() * 45)  -- Posição vertical
+        
+            -- Posição vertical com base nos filhos atuais do Parent
+            newDropdown.Button.Position = UDim2.new(0, 5, 0, #config.Parent:GetChildren() * 45)  
             newDropdown.Button.Parent = TabContent
         
             newDropdown.Listeners = {}
@@ -408,7 +415,6 @@ function UIlib:Janela()
             newDropdown:HideList(true)
             return newDropdown
         end
-
 
         
         -- Função para adicionar Switch na Tab
