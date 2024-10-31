@@ -355,7 +355,7 @@ function UIlib:Janela()
         
             local SelectedLabel = Instance.new("TextLabel")
             SelectedLabel.Size = UDim2.new(1, -40, 1, 0)  -- Tamanho do label de seleção
-            SelectedLabel.Text = config.Options[1] or "Selecione uma opção"
+            SelectedLabel.Text = "Selecione opções"
             SelectedLabel.Font = Enum.Font.Roboto
             SelectedLabel.TextSize = 14
             SelectedLabel.TextColor3 = Color3.new(1, 1, 1)
@@ -380,6 +380,8 @@ function UIlib:Janela()
             OptionsList.Visible = false  -- Esconder inicialmente
             OptionsList.Parent = DropdownFrame
         
+            local selectedOptions = {}  -- Armazena as opções selecionadas
+        
             -- Criar as opções
             for index, option in ipairs(config.Options) do
                 local OptionButton = Instance.new("TextButton")
@@ -393,10 +395,36 @@ function UIlib:Janela()
                 OptionButton.Parent = OptionsList
         
                 OptionButton.MouseButton1Click:Connect(function()
-                    SelectedLabel.Text = option  -- Atualiza o texto do label
-                    OptionsList.Visible = false  -- Esconde a lista
+                    -- Verifica se a opção já está selecionada
+                    local isSelected = selectedOptions[option]
+        
+                    if isSelected then
+                        -- Desmarca a opção se já estiver selecionada
+                        selectedOptions[option] = nil
+                        OptionButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)  -- Cor padrão
+                    else
+                        -- Se não estiver selecionada, verifica o limite
+                        if #selectedOptions < (config.MaxSelections or #config.Options) then
+                            selectedOptions[option] = true
+                            OptionButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)  -- Cor para selecionada
+                        else
+                            -- Exibe uma mensagem de aviso ou feedback ao usuário
+                            print("Máximo de seleções atingido!")  -- Aqui pode-se usar um sistema de notificações
+                        end
+                    end
+        
+                    -- Atualiza o texto do label com as opções selecionadas
+                    local selectedText = {}
+                    for k in pairs(selectedOptions) do
+                        table.insert(selectedText, k)
+                    end
+        
+                    SelectedLabel.Text = #selectedText > 0 and table.concat(selectedText, ", ") or "Selecione opções"
+                    
+                    -- Esconde a lista
+                    OptionsList.Visible = false
                     if config.Callback then
-                        config.Callback(option)  -- Chama o callback se definido
+                        config.Callback(selectedText)  -- Chama o callback com as opções selecionadas
                     end
                 end)
             end
@@ -404,7 +432,7 @@ function UIlib:Janela()
             -- Exibir/ocultar a lista de opções ao clicar no botão
             DropdownButton.MouseButton1Click:Connect(function()
                 OptionsList.Visible = not OptionsList.Visible
-                
+        
                 -- Atualiza o tamanho do dropdown com base na visibilidade da lista
                 if OptionsList.Visible then
                     OptionsList.Size = UDim2.new(1, 0, 0, #config.Options * 30)  -- Aumenta o tamanho conforme necessário
@@ -413,9 +441,9 @@ function UIlib:Janela()
                 end
             end)
         
-            -- O tamanho do DropdownFrame não é alterado, mantendo a altura do botão do dropdown fixo
             return DropdownFrame  -- Retorna o frame do dropdown
         end
+
 
 
 
