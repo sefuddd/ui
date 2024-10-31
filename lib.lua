@@ -347,10 +347,6 @@ function UIlib:Janela()
 
         -- Dropdown
         function UIlib:Dropdown(config)
-            -- Verifica se o Parent foi fornecido e se é válido
-            if not config.Parent then
-                error("O parâmetro 'Parent' deve ser fornecido e não pode ser nil.")
-            end
         
             -- Criação do novo dropdown
             local newDropdown = {}
