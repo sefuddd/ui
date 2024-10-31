@@ -440,7 +440,6 @@ function UIlib:Janela()
                 OptionButton.TextSize = 14
                 OptionButton.TextColor3 = Color3.new(0, 0, 0)  -- Cor do texto (preto)
                 OptionButton.BackgroundColor3 = Color3.fromRGB(240, 240, 240)  -- Cor do fundo
-                option.BackgroundColor3 = selectedOptions[option.Text] and Color3.fromRGB(200, 200, 200) or Color3.fromRGB(255, 255, 255)
                 OptionButton.Parent = DropdownContent
         
                 -- Canto arredondado para os botões de opção
@@ -457,6 +456,7 @@ function UIlib:Janela()
                         -- Adiciona a seleção se não estiver selecionado
                         if not config.MaxSelections or countSelectedItems() < config.MaxSelections then
                             selectedItems[option] = true
+                            option.BackgroundColor3 = selectedOptions[option.Text] and Color3.fromRGB(200, 200, 200) or Color3.fromRGB(255, 255, 255)
                         end
                     end
                     updateButton()  -- Atualiza o botão com as seleções
