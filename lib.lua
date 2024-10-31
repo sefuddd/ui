@@ -355,7 +355,7 @@ function UIlib:Janela()
         
             local SelectedLabel = Instance.new("TextLabel")
             SelectedLabel.Size = UDim2.new(1, -40, 1, 0)  -- Tamanho do label de seleção
-            SelectedLabel.Text = "Selecione uma opção"
+            SelectedLabel.Text = config.Options[1] or "Selecione uma opção"
             SelectedLabel.Font = Enum.Font.Roboto
             SelectedLabel.TextSize = 14
             SelectedLabel.TextColor3 = Color3.new(1, 1, 1)
@@ -380,61 +380,44 @@ function UIlib:Janela()
             OptionsList.Visible = false  -- Esconder inicialmente
             OptionsList.Parent = DropdownFrame
         
-            -- Armazenar opções selecionadas
-            local selectedOptions = {}
-        
             -- Criar as opções
-            for _, option in ipairs(config.Options) do
+            for index, option in ipairs(config.Options) do
                 local OptionButton = Instance.new("TextButton")
-                OptionButton.Size = UDim2.new(1, 0, 0, 30)
+                OptionButton.Size = UDim2.new(1, 0, 0, 30)  -- Tamanho de cada opção
                 OptionButton.Text = option
                 OptionButton.Font = Enum.Font.Roboto
                 OptionButton.TextSize = 14
                 OptionButton.TextColor3 = Color3.new(1, 1, 1)
                 OptionButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+                OptionButton.Position = UDim2.new(0, 0, 0, (index - 1) * 30)  -- Ajusta a posição vertical da opção
                 OptionButton.Parent = OptionsList
         
                 OptionButton.MouseButton1Click:Connect(function()
-                    -- Verifica se a opção já está selecionada
-                    if selectedOptions[option] then
-                        -- Se já está selecionada, remove
-                        selectedOptions[option] = nil
-                        OptionButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70) -- Cor padrão
-                    else
-                        -- Se não está selecionada, verifica se pode adicionar
-                        if #selectedOptions < (config.MaxSelections or 1) then
-                            selectedOptions[option] = true
-                            OptionButton.BackgroundColor3 = Color3.fromRGB(100, 255, 100)  -- Cor para selecionado
-                        else
-                            -- Se o limite foi atingido, não adiciona
-                            print("Limite de seleções atingido")
-                        end
+                    SelectedLabel.Text = option  -- Atualiza o texto do label
+                    OptionsList.Visible = false  -- Esconde a lista
+                    if config.Callback then
+                        config.Callback(option)  -- Chama o callback se definido
                     end
-        
-                    -- Atualiza o label com as opções selecionadas
-                    SelectedLabel.Text = "Selecionadas: " .. table.concat(table.keys(selectedOptions), ", ")
                 end)
             end
         
             -- Exibir/ocultar a lista de opções ao clicar no botão
             DropdownButton.MouseButton1Click:Connect(function()
                 OptionsList.Visible = not OptionsList.Visible
+                
+                -- Atualiza o tamanho do dropdown com base na visibilidade da lista
+                if OptionsList.Visible then
+                    OptionsList.Size = UDim2.new(1, 0, 0, #config.Options * 30)  -- Aumenta o tamanho conforme necessário
+                else
+                    OptionsList.Size = UDim2.new(1, 0, 0, 0)  -- Reseta para tamanho escondido
+                end
             end)
         
-            -- Fechar a lista ao clicar fora ou no botão
-            local function closeDropdown()
-                OptionsList.Visible = false
-            end
-        
-            -- Conectar ao evento de clique fora do dropdown
-            DropdownFrame.MouseLeave:Connect(closeDropdown)
-        
-            return {
-                GetSelectedOptions = function()
-                    return selectedOptions
-                end
-            }
+            -- O tamanho do DropdownFrame não é alterado, mantendo a altura do botão do dropdown fixo
+            return DropdownFrame  -- Retorna o frame do dropdown
         end
+
+
 
 
         
