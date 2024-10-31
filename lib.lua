@@ -384,7 +384,7 @@ function UIlib:Janela()
             -- Criar as opções
             for _, option in ipairs(config.Options) do
                 local OptionButton = Instance.new("TextButton")
-                OptionButton.Size = UDim2.new(1, 0, 0, 30)
+                OptionButton.Size = UDim2.new(1, 0, 0, 30)  -- Tamanho de cada opção
                 OptionButton.Text = option
                 OptionButton.Font = Enum.Font.Roboto
                 OptionButton.TextSize = 14
@@ -404,9 +404,16 @@ function UIlib:Janela()
             -- Exibir/ocultar a lista de opções ao clicar no botão
             DropdownButton.MouseButton1Click:Connect(function()
                 OptionsList.Visible = not OptionsList.Visible
+                
+                -- Atualiza o tamanho do dropdown com base na visibilidade da lista
+                if OptionsList.Visible then
+                    OptionsList.Size = UDim2.new(1, 0, 0, #config.Options * 30)  -- Aumenta o tamanho conforme necessário
+                else
+                    OptionsList.Size = UDim2.new(1, 0, 0, 0)  -- Reseta para tamanho escondido
+                end
             end)
         
-            -- Fechar a lista ao clicar fora
+            -- Fechar a lista ao clicar fora (opcional)
             OptionsList:GetPropertyChangedSignal("Visible"):Connect(function()
                 if OptionsList.Visible == false then
                     DropdownFrame.Size = UDim2.new(1, -10, 0, 40)  -- Tamanho normal
