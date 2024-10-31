@@ -346,7 +346,6 @@ function UIlib:Janela()
 
 
         -- Dropdown
-        -- Função para adicionar um Dropdown na Tab
         function UIlib:Dropdown(config)
             local DropdownFrame = Instance.new("Frame")
             DropdownFrame.Size = UDim2.new(1, -10, 0, 40)  -- Tamanho do Dropdown
@@ -414,17 +413,10 @@ function UIlib:Janela()
                 end
             end)
         
-            -- Fechar a lista ao clicar fora (opcional)
-            OptionsList:GetPropertyChangedSignal("Visible"):Connect(function()
-                if OptionsList.Visible == false then
-                    DropdownFrame.Size = UDim2.new(1, -10, 0, 40)  -- Tamanho normal
-                else
-                    DropdownFrame.Size = UDim2.new(1, -10, 0, 40 + #config.Options * 30)  -- Aumenta o tamanho conforme necessário
-                end
-            end)
-        
+            -- O tamanho do DropdownFrame não é alterado, mantendo a altura do botão do dropdown fixo
             return DropdownFrame  -- Retorna o frame do dropdown
         end
+
 
 
 
